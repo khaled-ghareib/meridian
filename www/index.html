@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0D1117">
+<meta name="theme-color" content="#0D1117" id="metaTheme">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,27 +20,38 @@
 :root{
   --bg:#0D1117;--card:#161B22;--raised:#1C2330;--line:#2A3140;--text:#E6EDF3;--muted:#8B949E;--faint:#5A6372;
   --mint:#3DDC97;--coral:#FF7A6B;--gold:#E8C468;--amber:#F0A35E;
+  --on-accent:#0D1117;--navbg:rgba(22,27,34,.96);--grid:#222936;--zero:#3A4252;--glow:rgba(232,196,104,.13);
+  --edge:rgba(255,255,255,.03);--shadow:0 6px 22px rgba(232,196,104,.35);--toast-btn:#8A6A10;
   --r:18px;--pad:16px;--nav:68px;
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#F4F2ED;--card:#FFFFFF;--raised:#F1EEE8;--line:#E6E1D8;--text:#15181D;--muted:#6A707A;--faint:#A3A7AE;
+  --mint:#0E9F68;--coral:#E0503C;--gold:#B8892A;--amber:#D2791F;
+  --on-accent:#FFFFFF;--navbg:rgba(255,255,255,.96);--grid:#EEEAE2;--zero:#D5CFC4;--glow:rgba(184,137,42,.12);
+  --edge:rgba(0,0,0,.04);--shadow:0 6px 18px rgba(184,137,42,.30);--toast-btn:#E8C468;
+  color-scheme:light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;
-  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none;transition:background-color .25s}
 body{min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
 button{background:none;border:0;padding:0;cursor:pointer}
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 .hidden{display:none!important}
+.tint-mint{background:color-mix(in srgb,var(--mint) 13%,transparent)}
+.tint-coral{background:color-mix(in srgb,var(--coral) 13%,transparent)}
+.tint-gold{background:color-mix(in srgb,var(--gold) 13%,transparent)}
 
 /* ---------- top bar ---------- */
-.top{position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 78%,rgba(13,17,23,0));
-  padding:calc(var(--safe-t) + 14px) var(--pad) 12px}
+.top{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(var(--safe-t) + 14px) var(--pad) 12px}
 .brandrow{display:flex;align-items:center;justify-content:space-between}
 .brand{font-weight:700;letter-spacing:.18em;font-size:13px;color:var(--muted)}
 .brand b{color:var(--gold);font-weight:700}
 .page-title{font-size:26px;font-weight:600;margin:8px 0 12px;letter-spacing:-.01em}
-.monthbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:4px}
+.monthbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px}
 .monthbar button.arrow{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
 .monthbar button.arrow:active{background:var(--raised)}
 .monthbar .mlabel{flex:1;text-align:center;font-weight:600;font-size:15px;height:40px;border-radius:10px}
@@ -51,15 +62,16 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .view{display:none;animation:fade .25s ease}
 .view.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,.03)}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;border:1px solid var(--edge)}
 .card h3{margin:0;font-size:15px;font-weight:600}
 .card .sub{margin:3px 0 0;color:var(--muted);font-size:12px}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
 .label{font-size:10.5px;font-weight:600;letter-spacing:.09em;color:var(--muted);text-transform:uppercase}
 .section-label{margin:22px 4px 10px}
+.linkbtn{color:var(--gold);font-weight:600;font-size:13px;padding:4px 2px}
 
 /* hero */
-.hero{background:radial-gradient(120% 140% at 100% 0%,rgba(232,196,104,.13),transparent 55%),var(--card);padding:18px}
+.hero{background:radial-gradient(120% 140% at 100% 0%,var(--glow),transparent 55%),var(--card);padding:18px}
 .hero .big{font-size:34px;font-weight:600;letter-spacing:-.02em;margin:6px 0 2px}
 .hero .flow{display:flex;gap:10px;margin-top:16px}
 .hero .flow > div{flex:1;background:var(--raised);border-radius:14px;padding:11px 12px}
@@ -69,7 +81,7 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .pos{color:var(--mint)}.neg{color:var(--coral)}
 
 .kgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.kpi{background:var(--card);border-radius:var(--r);padding:14px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.03)}
+.kpi{background:var(--card);border-radius:var(--r);padding:14px;position:relative;overflow:hidden;border:1px solid var(--edge)}
 .kpi::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--accent,var(--muted))}
 .kpi .v{font-size:19px;font-weight:600;margin:7px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .s{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -90,21 +102,17 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:22px 8px}
 .empty b{display:block;color:var(--text);font-weight:600;margin-bottom:4px;font-size:14px}
 
-/* comparison bars */
+/* bars */
 .cmp .r{margin-bottom:14px}
 .cmp .r:last-child{margin-bottom:0}
 .cmp .t{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
 .cmp .t b{font-weight:600}
 .track{height:12px;border-radius:7px;background:var(--raised);overflow:hidden}
 .fillbar{height:100%;border-radius:7px;transition:width .5s ease}
-
-/* ranked bars */
 .rank .r{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin-bottom:13px;font-size:13px}
 .rank .r:last-child{margin-bottom:0}
 .rank .r .track{grid-column:1/3;height:8px}
 .rank .meta{color:var(--muted);font-size:11.5px;font-weight:500}
-
-/* overview chart */
 .ovr svg{width:100%;height:auto;display:block}
 .ovr .lg{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-bottom:8px}
 .ovr .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
@@ -112,7 +120,7 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 /* observations */
 .obs{display:flex;flex-direction:column;gap:12px}
 .obs .o{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:13.5px;line-height:1.45}
-.obs .o .ic{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:11px;background:rgba(232,196,104,.12);color:var(--gold)}
+.obs .o .ic{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:11px;color:var(--gold)}
 
 /* category health */
 .health .h{display:grid;grid-template-columns:10px 1fr auto;gap:4px 10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
@@ -121,10 +129,10 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .health .am{font-size:13.5px;font-weight:600;text-align:right}
 .health .info{grid-column:2/4;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)}
 .pill{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.02em}
-.pill.over{background:rgba(255,122,107,.15);color:var(--coral)}
-.pill.high{background:rgba(240,163,94,.15);color:var(--amber)}
-.pill.near{background:rgba(232,196,104,.15);color:var(--gold)}
-.pill.ok{background:rgba(61,220,151,.12);color:var(--mint)}
+.pill.over{background:color-mix(in srgb,var(--coral) 15%,transparent);color:var(--coral)}
+.pill.high{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
+.pill.near{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold)}
+.pill.ok{background:color-mix(in srgb,var(--mint) 13%,transparent);color:var(--mint)}
 .pill.none{background:var(--raised);color:var(--muted)}
 .minibar{grid-column:2/4;height:5px;border-radius:3px;background:var(--raised);overflow:hidden;margin-top:2px}
 .minibar div{height:100%;border-radius:3px}
@@ -136,10 +144,10 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .ring .center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
 .ring .center b{font-size:22px;font-weight:600;display:block}
 .ring .center span{font-size:10px;color:var(--muted);letter-spacing:.06em}
-.ledger .l{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13.5px}
+.ledger .l{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13.5px;gap:12px}
 .ledger .l:first-child{border-top:0}
 .ledger .l span{color:var(--muted)}
-.ledger .l b{font-weight:600}
+.ledger .l b{font-weight:600;text-align:right}
 .hist .hr{display:grid;grid-template-columns:62px 1fr 74px 44px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:12.5px}
 .hist .hr:first-child{border-top:0}
 .hist .hr.sel{color:var(--gold)}
@@ -147,13 +155,31 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .hist .hr .sv{text-align:right;font-weight:600}
 .hist .hr .rt{text-align:right;color:var(--muted)}
 
+/* goal */
+.goal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.goal-name{font-size:17px;font-weight:600}
+.goal-amt{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:10px 0 2px}
+.goal-amt span{font-size:15px;color:var(--muted);font-weight:500}
+.goal .track{height:10px;margin:10px 0 6px}
+.goal .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.tile{border-radius:14px;padding:13px 14px;margin-top:12px}
+.tile.plain{background:var(--raised)}
+.tile .tl{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.tile .big{font-size:20px;font-weight:600;margin-top:4px}
+.tile p{margin:6px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.tile .track{height:7px;margin:9px 0 0;background:color-mix(in srgb,var(--text) 8%,transparent)}
+.cta{display:flex;align-items:center;gap:14px;width:100%;text-align:left}
+.cta .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;flex:none}
+.cta .grow{flex:1}
+.cta .grow small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.4}
+
 /* activity */
-.chips{display:flex;gap:8px;margin:2px 0 14px;overflow-x:auto;scrollbar-width:none}
+.chips{display:flex;gap:8px;margin:2px 0 14px;overflow-x:auto;scrollbar-width:none;flex-wrap:wrap}
 .chip{padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
 .chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
 .daygroup{margin-bottom:14px}
 .dayhead{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.04em;margin:0 4px 8px}
-.txlist{background:var(--card);border-radius:var(--r);overflow:hidden}
+.txlist{background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--edge)}
 .tx{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);width:100%;text-align:left}
 .tx:first-child{border-top:0}
 .tx:active{background:var(--raised)}
@@ -162,11 +188,11 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .tx .nt{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .tx .am{font-weight:600;font-size:14.5px;text-align:right}
 .sumrow{display:flex;gap:10px;margin-bottom:14px}
-.sumrow > div{flex:1;background:var(--card);border-radius:14px;padding:11px 12px}
+.sumrow > div{flex:1;background:var(--card);border-radius:14px;padding:11px 12px;border:1px solid var(--edge)}
 .sumrow .v{font-weight:600;margin-top:4px;font-size:15px}
 
 /* settings */
-.set-list{background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.set-list{background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:12px;border:1px solid var(--edge)}
 .set-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-top:1px solid var(--line);width:100%;text-align:left;font-size:14px}
 .set-row:first-child{border-top:0}
 .set-row:active{background:var(--raised)}
@@ -176,21 +202,26 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .set-row.add{color:var(--gold);font-weight:600}
 .set-row.danger{color:var(--coral)}
 .chev{color:var(--faint)}
+.theme-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px;background:var(--card);border-radius:var(--r);margin-bottom:12px;border:1px solid var(--edge)}
+.theme-seg button{padding:12px 6px;border-radius:12px;font-size:13.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px}
+.theme-seg button.on{background:var(--raised);color:var(--text);box-shadow:inset 0 0 0 1.5px var(--gold)}
+.theme-seg .sw3{width:34px;height:22px;border-radius:7px;border:1px solid var(--line);overflow:hidden;display:flex}
+.theme-seg .sw3 i{flex:1}
 
 /* bottom nav */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(22,27,34,.96);backdrop-filter:blur(14px);
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--navbg);backdrop-filter:blur(14px);
   border-top:1px solid var(--line);height:calc(var(--nav) + var(--safe-b));padding-bottom:var(--safe-b);
   display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
 nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:500;color:var(--faint);height:100%;justify-content:center}
 nav.tabs button.on{color:var(--text)}
 nav.tabs button.on svg{stroke:var(--gold)}
 nav.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-nav.tabs .fab{width:54px;height:54px;border-radius:18px;background:var(--gold);color:var(--bg);margin:auto;display:grid;place-items:center;
-  box-shadow:0 6px 22px rgba(232,196,104,.35);transform:translateY(-12px)}
-nav.tabs .fab svg{stroke:var(--bg);width:26px;height:26px;stroke-width:2.4}
+nav.tabs .fab{width:54px;height:54px;border-radius:18px;background:var(--gold);margin:auto;display:grid;place-items:center;
+  box-shadow:var(--shadow);transform:translateY(-12px)}
+nav.tabs .fab svg{stroke:var(--on-accent);width:26px;height:26px;stroke-width:2.4}
 
 /* sheets & dialogs */
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
 .scrim.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--card);border-radius:24px 24px 0 0;
   padding:10px var(--pad) calc(var(--safe-b) + 18px);transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
@@ -200,8 +231,11 @@ nav.tabs .fab svg{stroke:var(--bg);width:26px;height:26px;stroke-width:2.4}
 .sheet h2{margin:0 0 16px;font-size:19px;font-weight:600}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--raised);border-radius:12px;padding:4px;margin-bottom:18px}
 .seg button{padding:10px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted)}
-.seg button.on.inc{background:var(--mint);color:#06281a}
-.seg button.on.exp{background:var(--coral);color:#3a0d08}
+.seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.seg button.on.inc{background:var(--mint);color:var(--on-accent)}
+.seg button.on.exp{background:var(--coral);color:var(--on-accent)}
+.seg.small{margin-bottom:14px}
+.seg.small button{padding:8px;font-size:12.5px}
 .amount-box{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--line);padding:4px 2px 10px;margin-bottom:18px}
 .amount-box span{color:var(--muted);font-weight:600;font-size:16px}
 .amount-box input{flex:1;min-width:0;background:none;border:0;outline:0;font-size:38px;font-weight:600;letter-spacing:-.02em}
@@ -210,15 +244,15 @@ nav.tabs .fab svg{stroke:var(--bg);width:26px;height:26px;stroke-width:2.4}
 .field label{display:block;margin-bottom:8px}
 .input{width:100%;background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:13px 14px;outline:0;font-size:15px}
 .input:focus{border-color:var(--gold)}
-input[type=date].input{color-scheme:dark;min-height:48px}
+input[type=date].input{min-height:48px}
 .catgrid{display:flex;flex-wrap:wrap;gap:8px}
 .cat{padding:9px 13px;border-radius:12px;background:var(--raised);border:1px solid var(--line);font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:7px}
-.cat.on{border-color:var(--gold);background:rgba(232,196,104,.1)}
+.cat.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
 .err{color:var(--coral);font-size:12.5px;min-height:18px;margin:-4px 0 8px}
-.btn{width:100%;padding:15px;border-radius:14px;font-weight:600;font-size:15.5px;background:var(--gold);color:var(--bg)}
+.btn{width:100%;padding:15px;border-radius:14px;font-weight:600;font-size:15.5px;background:var(--gold);color:var(--on-accent)}
 .btn:active{filter:brightness(.92)}
 .btn.ghost{background:var(--raised);color:var(--text)}
-.btn.danger{background:rgba(255,122,107,.12);color:var(--coral)}
+.btn.danger{background:color-mix(in srgb,var(--coral) 12%,transparent);color:var(--coral)}
 .btnrow{display:flex;gap:10px;margin-top:10px}
 .btnrow .btn{flex:1}
 .dialog{position:fixed;left:24px;right:24px;top:50%;z-index:70;background:var(--card);border-radius:20px;padding:20px;
@@ -230,18 +264,35 @@ input[type=date].input{color-scheme:dark;min-height:48px}
 .sw{width:32px;height:32px;border-radius:10px;border:2px solid transparent}
 .sw.on{border-color:var(--text)}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(var(--nav) + var(--safe-b) + 14px);z-index:80;background:var(--text);color:var(--bg);
-  border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:500;
+  border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;font-weight:500;line-height:1.35;
   transform:translateY(20px);opacity:0;pointer-events:none;transition:.22s}
 .toast.on{transform:none;opacity:1;pointer-events:auto}
-.toast button{font-weight:700;color:#8a6a10}
+.toast button{font-weight:700;color:var(--toast-btn);flex:none}
 .monthlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .monthlist button{padding:12px 6px;border-radius:12px;background:var(--raised);font-size:13.5px;font-weight:500}
-.monthlist button.on{background:var(--gold);color:var(--bg);font-weight:700}
+.monthlist button.on{background:var(--gold);color:var(--on-accent);font-weight:700}
 .monthlist button.has::after{content:"•";color:var(--gold);margin-left:4px}
-.monthlist button.on.has::after{color:var(--bg)}
+.monthlist button.on.has::after{color:var(--on-accent)}
 .yearnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:600}
 .yearnav button{width:40px;height:40px;border-radius:10px;background:var(--raised)}
 .foot{color:var(--faint);font-size:11.5px;text-align:center;margin:18px 0 0;line-height:1.5}
+
+/* calculator */
+.calc-f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;background:var(--raised);border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin-bottom:10px}
+.calc-f:focus-within{border-color:var(--gold)}
+.calc-f label{grid-column:1/3;font-size:10.5px;font-weight:600;letter-spacing:.09em;color:var(--muted);text-transform:uppercase}
+.calc-f input{background:none;border:0;outline:0;font-size:22px;font-weight:600;min-width:0;width:100%;padding:2px 0}
+.calc-f .unit{color:var(--muted);font-size:13px;font-weight:600}
+.calc-f.result{background:color-mix(in srgb,var(--gold) 12%,var(--raised));border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.calc-f.result label{color:var(--gold)}
+.calc-f .hint{grid-column:1/3;font-size:11.5px;color:var(--muted)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 12px}
+.quick button{padding:6px 11px;border-radius:9px;background:var(--raised);border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--muted)}
+.split{height:12px;border-radius:7px;overflow:hidden;display:flex;background:var(--raised);margin:12px 0 8px}
+.calc-sum .l{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0}
+.calc-sum .l span{color:var(--muted)}
+.calc-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
 </style>
 </head>
 <body>
@@ -262,7 +313,7 @@ input[type=date].input{color-scheme:dark;min-height:48px}
 <main>
   <section class="view on" id="v-home"></section>
   <section class="view" id="v-activity"></section>
-  <section class="view" id="v-savings"></section>
+  <section class="view" id="v-plan"></section>
   <section class="view" id="v-settings"></section>
 </main>
 
@@ -270,7 +321,7 @@ input[type=date].input{color-scheme:dark;min-height:48px}
   <button data-tab="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Overview</button>
   <button data-tab="activity"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Activity</button>
   <button id="fab" aria-label="Add transaction"><span class="fab"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></button>
-  <button data-tab="savings"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9"/><path d="M12 3v9h9"/></svg>Savings</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg>Plan</button>
   <button data-tab="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Settings</button>
 </nav>
 
@@ -292,29 +343,38 @@ const MSHORT = MONTHS.map(m => m.slice(0,3));
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 
+function defaultCalc(){
+  return {mode: "loan",
+    loan: {P: 20000, r: 25, n: 12, type: "flat"},
+    save: {P: 50000, r: 22, n: 12, type: "simple"}};
+}
 function defaultState(){
   return {
-    version: 1,
+    version: 2,
     settings: {
       incomeCats: ["Allowance","Work","Gift"].map((n,i)=>({id:uid()+i,name:n,color:INC_COLORS[i]})),
       expenseCats: ["Hangouts","Transportation","Talabat / Food","Leisure"].map((n,i)=>({id:uid()+i,name:n,color:EXP_COLORS[i],budget:null})),
-      target: 0.20,
-      threshold: 0.30
+      target: 0.20, threshold: 0.30, theme: "system"
     },
-    tx: []
+    tx: [], goal: null, calc: defaultCalc()
   };
 }
-
 function validState(s){
   return s && typeof s === "object" && s.settings && Array.isArray(s.tx) &&
     Array.isArray(s.settings.incomeCats) && Array.isArray(s.settings.expenseCats);
 }
-
+function upgrade(s){
+  if (!s.settings.theme) s.settings.theme = "system";
+  if (s.goal === undefined) s.goal = null;
+  if (!s.calc || !s.calc.loan || !s.calc.save) s.calc = defaultCalc();
+  s.version = 2;
+  return s;
+}
 function loadState(){
   let raw = null;
   try { raw = localStorage.getItem(KEY); } catch(e){}
   if (!raw && window.Android && Android.restore) { try { raw = Android.restore(); } catch(e){} }
-  if (raw) { try { const s = JSON.parse(raw); if (validState(s)) return s; } catch(e){} }
+  if (raw) { try { const s = JSON.parse(raw); if (validState(s)) return upgrade(s); } catch(e){} }
   return defaultState();
 }
 let S = loadState();
@@ -323,6 +383,31 @@ function save(){
   try { localStorage.setItem(KEY, json); } catch(e){}
   if (window.Android && Android.persist) { try { Android.persist(json); } catch(e){} }
 }
+let saveTimer;
+const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); };
+
+/* ============================================================ theme */
+let systemDark = true;
+function readSystemTheme(){
+  if (window.Android && Android.isSystemDark) { try { return !!Android.isSystemDark(); } catch(e){} }
+  return window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)").matches : true;
+}
+function applyTheme(){
+  const pref = S.settings.theme || "system";
+  const dark = pref === "dark" || (pref === "system" && systemDark);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  const bg = dark ? "#0D1117" : "#F4F2ED";
+  document.getElementById("metaTheme").setAttribute("content", bg);
+  if (window.Android && Android.setTheme) { try { Android.setTheme(!dark); } catch(e){} }
+}
+systemDark = readSystemTheme();
+applyTheme();
+if (window.matchMedia) {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onChange = () => { if (!window.Android) { systemDark = mq.matches; applyTheme(); } };
+  mq.addEventListener ? mq.addEventListener("change", onChange) : mq.addListener(onChange);
+}
+window.meridianSystemTheme = dark => { systemDark = !!dark; applyTheme(); };
 
 /* ============================================================ helpers */
 const $ = s => document.querySelector(s);
@@ -332,13 +417,19 @@ const egp = (n, d=0) => (n < 0 ? "−" : "") + "EGP " + fmt(Math.abs(n), d);
 const amt = n => { const r = Math.round(n*100)/100; return egp(r, r % 1 ? 2 : 0); };
 const pct = (x, d=0) => (x < 0 ? "−" : "") + fmt(Math.abs(x*100), d) + "%";
 const pad = n => String(n).padStart(2,"0");
-const isoToday = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
-const mkey = (y, m) => `${y}-${pad(m+1)}`;           // m: 0..11
+const toIso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const isoToday = () => toIso(new Date());
+const mkey = (y, m) => `${y}-${pad(m+1)}`;
 const parseKey = k => { const [y, m] = k.split("-").map(Number); return {y, m: m-1}; };
 const shiftKey = (k, n) => { const {y,m} = parseKey(k); const d = new Date(y, m+n, 1); return mkey(d.getFullYear(), d.getMonth()); };
+const keyDiff = (a, b) => { const A = parseKey(a), B = parseKey(b); return (B.y - A.y)*12 + (B.m - A.m); };
 const keyName = k => { const {y,m} = parseKey(k); return `${MONTHS[m]} ${y}`; };
 const keyShort = k => { const {y,m} = parseKey(k); return `${MSHORT[m]} ’${String(y).slice(2)}`; };
+const keyMid = k => { const {y,m} = parseKey(k); return `${MSHORT[m]} ${y}`; };
 const currentKey = () => isoToday().slice(0,7);
+const daysInKey = k => { const {y,m} = parseKey(k); return new Date(y, m+1, 0).getDate(); };
+const prettyDate = iso => { const [y,m,d] = iso.split("-").map(Number); return `${d} ${MSHORT[m-1]} ${y}`; };
+const parseNum = v => { const s = String(v ?? "").replace(/[,\s]/g, "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)); return s === "" ? NaN : parseFloat(s); };
 const dayLabel = iso => {
   const [y,m,d] = iso.split("-").map(Number);
   const dt = new Date(y, m-1, d);
@@ -369,7 +460,7 @@ function monthCalc(k){
   return {k, totInc, totExp, savings: totInc - totExp, rate: totInc > 0 ? (totInc - totExp)/totInc : 0,
     incCount: inc.length, expCount: exp.length, incCats: byCat(inc,"income"), expCats: byCat(exp,"expense"), list: inMonth};
 }
-function cumulative(k){ // all months up to and including k
+function cumulative(k){
   let s = 0; for (const t of S.tx) if (t.date.slice(0,7) <= k) s += t.type === "income" ? t.amount : -t.amount; return s;
 }
 function status(c, M){
@@ -385,11 +476,102 @@ function daysCounted(k){
   const ck = currentKey();
   if (k > ck) return 0;
   if (k === ck) return new Date().getDate();
-  const {y,m} = parseKey(k); return new Date(y, m+1, 0).getDate();
+  return daysInKey(k);
 }
+
+/* ---------- savings goal planner ---------- */
+function netBetween(fromIso, toIsoIncl){
+  let inc = 0, exp = 0;
+  for (const t of S.tx) if (t.date >= fromIso && t.date <= toIsoIncl) { if (t.type === "income") inc += t.amount; else exp += t.amount; }
+  return {inc, exp, net: inc - exp};
+}
+function goalPlan(){
+  const g = S.goal; if (!g) return null;
+  const today = isoToday(), ck = currentKey(), endKey = g.end.slice(0,7);
+  const monthStart = ck + "-01";
+  const dayBefore = iso => { const [y,m,d] = iso.split("-").map(Number); return toIso(new Date(y, m-1, d-1)); };
+  const saved = g.start <= today ? netBetween(g.start, today).net : 0;
+  const remaining = g.target - saved;
+  const done = saved >= g.target;
+  const started = g.start <= today;
+  // months left, counting the current month (or the start month if the goal starts later)
+  const fromKey = started ? ck : g.start.slice(0,7);
+  const monthsLeft = keyDiff(fromKey, endKey) >= 0 ? keyDiff(fromKey, endKey) + 1 : 0;
+  const savedBefore = (started && g.start < monthStart) ? netBetween(g.start, dayBefore(monthStart)).net : 0;
+  const needThisMonth = monthsLeft > 0 && started ? Math.max(0, (g.target - savedBefore) / monthsLeft) : 0;
+  const perMonthFlat = monthsLeft > 0 ? Math.max(0, remaining) / monthsLeft : 0;
+  // this month so far (from the later of goal start / 1st of month)
+  const from = started ? (g.start > monthStart ? g.start : monthStart) : null;
+  const tm = from ? netBetween(from, today) : {inc:0, exp:0, net:0};
+  const savedThisMonth = tm.net;
+  const safeToSpend = tm.inc - needThisMonth - tm.exp;
+  const daysLeft = daysInKey(ck) - new Date().getDate() + 1;
+  // latest income this month and what to set aside from it (goal gets paid first)
+  const incs = from ? S.tx.filter(t => t.type === "income" && t.date >= from && t.date <= today)
+    .sort((a,b) => a.date.localeCompare(b.date) || (a.created||0) - (b.created||0)) : [];
+  let latest = null;
+  if (incs.length) {
+    const last = incs[incs.length-1];
+    const before = incs.slice(0,-1).reduce((s,t) => s + t.amount, 0);
+    latest = {tx: last, setAside: Math.min(last.amount, Math.max(0, needThisMonth - before))};
+  }
+  // recent pace: average net of the last 3 complete months since the goal started
+  const paceMonths = [];
+  for (let i = 1; i <= 3; i++) {
+    const k = shiftKey(ck, -i);
+    if (k + "-31" < g.start.slice(0,7) + "-01") break;
+    const M = monthCalc(k); if (M.totInc || M.totExp) paceMonths.push(M.savings);
+  }
+  const pace = paceMonths.length ? paceMonths.reduce((a,b) => a+b, 0) / paceMonths.length : null;
+  let projection = null;
+  if (!done && pace !== null) {
+    if (pace <= 0) projection = {never: true};
+    else {
+      const monthsNeeded = Math.ceil(Math.max(0, remaining) / pace);
+      const finishKey = shiftKey(ck, monthsNeeded);
+      projection = {finishKey, late: keyDiff(endKey, finishKey), cut: Math.max(0, perMonthFlat - pace)};
+    }
+  }
+  return {g, saved, remaining, done, started, monthsLeft, needThisMonth, perMonthFlat, savedThisMonth,
+    monthInc: tm.inc, monthExp: tm.exp, safeToSpend, daysLeft, latest, pace, projection, endKey,
+    pctDone: g.target > 0 ? Math.max(0, saved / g.target) : 0, overdue: !done && keyDiff(ck, endKey) < 0};
+}
+
+/* ---------- interest calculator maths ---------- */
+const Calc = {
+  loanPay(P, r, n, type){
+    if (!(P > 0) || !(n > 0) || !(r >= 0)) return NaN;
+    if (type === "flat") return P * (1 + r/100 * n/12) / n;
+    const i = r/1200; if (i === 0) return P / n;
+    return P * i / (1 - Math.pow(1+i, -n));
+  },
+  loanRate(P, n, M, type){
+    if (!(P > 0) || !(n > 0) || !(M > 0)) return NaN;
+    if (M * n < P - 1e-9) return -1;                       // pays back less than borrowed
+    if (type === "flat") return (M * n / P - 1) * 12 / n * 100;
+    let lo = 0, hi = 2000;
+    if (Calc.loanPay(P, hi, n, type) < M) return NaN;
+    for (let k = 0; k < 200; k++) { const mid = (lo+hi)/2; if (Calc.loanPay(P, mid, n, type) < M) lo = mid; else hi = mid; }
+    return (lo+hi)/2;
+  },
+  saveFinal(P, r, n, type){
+    if (!(P > 0) || !(n > 0) || !(r >= 0)) return NaN;
+    return type === "simple" ? P * (1 + r/100 * n/12) : P * Math.pow(1 + r/1200, n);
+  },
+  saveRate(P, n, A, type){
+    if (!(P > 0) || !(n > 0) || !(A > 0)) return NaN;
+    if (A < P - 1e-9) return -1;
+    return type === "simple" ? (A/P - 1) * 12 / n * 100 : 1200 * (Math.pow(A/P, 1/n) - 1);
+  }
+};
+
 function observations(M, P){
   const o = [], name = keyName(M.k), thr = S.settings.threshold, target = S.settings.target;
   const top = [...M.expCats].sort((a,b) => b.amount - a.amount)[0];
+  const gp = goalPlan();
+  if (gp && !gp.done && gp.started && M.k === currentKey() && gp.monthsLeft > 0) {
+    o.push(["◎", `Goal “${gp.g.name}”: save ${egp(gp.needThisMonth)} this month — ${egp(Math.max(0, gp.savedThisMonth))} done so far.`]);
+  }
   if (M.totInc === 0 && M.totExp === 0) { o.push(["◆", `No transactions for ${name} yet. Tap + to add income or an expense and everything here fills itself in.`]); return o; }
   if (M.totInc === 0) o.push(["!", `You spent ${egp(M.totExp)} in ${name} with no income logged — that’s coming out of your savings.`]);
   else if (M.savings >= 0) o.push(["✓", `You saved ${egp(M.savings)} in ${name} — ${pct(M.rate)} of your income.`]);
@@ -420,7 +602,7 @@ function observations(M, P){
 
 /* ============================================================ UI state */
 let tab = "home", month = currentKey(), actFilter = "all";
-const titles = {home:"Overview", activity:"Activity", savings:"Savings", settings:"Settings"};
+const titles = {home:"Overview", activity:"Activity", plan:"Plan", settings:"Settings"};
 
 function setTab(t){
   tab = t;
@@ -436,7 +618,7 @@ function render(){
   const d = new Date(); $("#todayLabel").textContent = `${d.getDate()} ${MSHORT[d.getMonth()]} ${d.getFullYear()}`;
   if (tab === "home") renderHome();
   if (tab === "activity") renderActivity();
-  if (tab === "savings") renderSavings();
+  if (tab === "plan") renderPlan();
   if (tab === "settings") renderSettings();
 }
 
@@ -450,7 +632,7 @@ function donut(rows, total, centerLabel){
       stroke-dasharray="${Math.max(len-gap,0.01)} ${C}" stroke-dashoffset="${-off}"/>`;
     off += len;
   }
-  return `<div class="donut"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${R}" fill="none" stroke="var(--raised)" stroke-width="16"/>${arcs}</svg>
+  return `<div class="donut"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(--raised)" stroke-width="16"/>${arcs}</svg>
     <div class="center"><div><span>${centerLabel}</span><b class="num">${fmt(total)}</b><span>EGP</span></div></div></div>`;
 }
 function breakdownCard(title, M, type){
@@ -478,19 +660,19 @@ function overview(k){
   let g = "";
   const ticks = min < 0 ? [min, 0, max/2, max] : [0, max/4, max/2, max*3/4, max];
   for (const tv of ticks) {
-    g += `<line x1="${L}" x2="${W-Rr}" y1="${y(tv)}" y2="${y(tv)}" stroke="${tv === 0 ? "#3a4252" : "#222936"}" stroke-width="1"/>
-      <text x="${L-6}" y="${y(tv)+3.5}" text-anchor="end" font-size="9.5" fill="#8B949E">${Math.abs(tv) >= 1000 ? (tv<0?"−":"") + fmt(Math.abs(tv)/1000, Math.abs(tv) % 1000 ? 1 : 0) + "k" : (tv<0?"−":"") + fmt(Math.abs(tv))}</text>`;
+    g += `<line x1="${L}" x2="${W-Rr}" y1="${y(tv)}" y2="${y(tv)}" style="stroke:var(${tv === 0 ? "--zero" : "--grid"})" stroke-width="1"/>
+      <text x="${L-6}" y="${y(tv)+3.5}" text-anchor="end" font-size="9.5" style="fill:var(--muted)">${Math.abs(tv) >= 1000 ? (tv<0?"−":"") + fmt(Math.abs(tv)/1000, Math.abs(tv) % 1000 ? 1 : 0) + "k" : (tv<0?"−":"") + fmt(Math.abs(tv))}</text>`;
   }
   let pts = [];
   data.forEach((d, i) => {
     const cx = L + step*i + step/2;
-    const bar = (v, x, col) => { const y0 = y(0), y1 = y(v); return `<rect x="${x}" y="${Math.min(y0,y1)}" width="${bw}" height="${Math.max(Math.abs(y1-y0), v ? 1.5 : 0)}" rx="3" fill="${col}"/>`; };
-    g += bar(d.inc, cx - bw - 1.5, "#3DDC97") + bar(d.exp, cx + 1.5, "#FF7A6B");
-    g += `<text x="${cx}" y="${H-6}" text-anchor="middle" font-size="9.5" fill="${d.k === k ? "#E8C468" : "#8B949E"}" font-weight="${d.k === k ? 600 : 400}">${keyShort(d.k)}</text>`;
+    const bar = (v, x, col) => { const y0 = y(0), y1 = y(v); return `<rect x="${x}" y="${Math.min(y0,y1)}" width="${bw}" height="${Math.max(Math.abs(y1-y0), v ? 1.5 : 0)}" rx="3" style="fill:var(${col})"/>`; };
+    g += bar(d.inc, cx - bw - 1.5, "--mint") + bar(d.exp, cx + 1.5, "--coral");
+    g += `<text x="${cx}" y="${H-6}" text-anchor="middle" font-size="9.5" style="fill:var(${d.k === k ? "--gold" : "--muted"})" font-weight="${d.k === k ? 600 : 400}">${keyShort(d.k)}</text>`;
     pts.push([cx, y(d.sav)]);
   });
-  g += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="#E8C468" stroke-width="2.2" stroke-linejoin="round"/>`;
-  g += pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="#E8C468" stroke="#161B22" stroke-width="2"/>`).join("");
+  g += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" style="stroke:var(--gold)" stroke-width="2.2" stroke-linejoin="round"/>`;
+  g += pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.6" style="fill:var(--gold);stroke:var(--card)" stroke-width="2"/>`).join("");
   return `<div class="ovr"><div class="lg"><span><i style="background:var(--mint)"></i>Income</span><span><i style="background:var(--coral)"></i>Expenses</span><span><i style="background:var(--gold);height:3px;border-radius:2px;vertical-align:3px"></i>Left over</span></div>
     <svg viewBox="0 0 ${W} ${H}" font-family="Inter">${g}</svg></div>`;
 }
@@ -551,7 +733,7 @@ function renderHome(){
     <div class="card"><div class="card-head"><div><h3>Monthly overview</h3><p class="sub">Six months to ${keyName(month)}</p></div></div>${overview(month)}</div>
 
     <div class="label section-label">What your money did</div>
-    <div class="card"><div class="obs">${observations(M, P).map(([ic, t]) => `<div class="o"><div class="ic">${ic}</div><div>${esc(t)}</div></div>`).join("")}</div></div>
+    <div class="card"><div class="obs">${observations(M, P).map(([ic, t]) => `<div class="o"><div class="ic tint-gold">${ic}</div><div>${esc(t)}</div></div>`).join("")}</div></div>
 
     <div class="label section-label">Category health</div>
     <div class="card"><div class="health">${health.length ? health.map(c => {
@@ -581,14 +763,60 @@ function renderActivity(){
       return `<div class="daygroup"><div class="dayhead"><span>${dayLabel(d)}</span><span class="num">${net >= 0 ? "+" : "−"}${fmt(Math.abs(net))}</span></div>
         <div class="txlist">${day.map(t => {
           const c = catOf(t.type, t.catId), col = c ? c.color : OTHER, nm = c ? c.name : "Uncategorised";
-          return `<button class="tx" data-tx="${t.id}"><div class="av" style="background:${col}22;color:${col}">${esc(nm.charAt(0).toUpperCase())}</div>
+          return `<button class="tx" data-tx="${t.id}"><div class="av" style="background:${col}26;color:${col}">${esc(nm.charAt(0).toUpperCase())}</div>
             <div style="min-width:0"><div class="nm">${esc(nm)}</div><div class="nt">${t.note ? esc(t.note) : (t.type === "income" ? "Income" : "Expense")}</div></div>
             <div class="am num ${t.type === "income" ? "pos" : ""}">${t.type === "income" ? "+" : "−"}${fmt(t.amount, t.amount % 1 ? 2 : 0)}</div></button>`;
         }).join("")}</div></div>`;
     }).join("") : `<div class="card empty"><b>No ${actFilter === "all" ? "transactions" : actFilter === "income" ? "income" : "expenses"} in ${keyName(month)}</b>Tap the gold + button to add one.</div>`}`;
 }
 
-function renderSavings(){
+function goalCard(){
+  const p = goalPlan();
+  if (!p) return `<div class="card"><button class="cta" id="newGoal"><div class="ic tint-gold" style="color:var(--gold)">◎</div>
+    <div class="grow"><b>Set a savings goal</b><small>Pick an amount and a deadline. Meridian works out how much to put aside from every income so you get there.</small></div><span class="chev">›</span></button></div>`;
+  const g = p.g, barCol = p.done ? "var(--mint)" : "var(--gold)";
+  let body = "";
+  if (p.done) {
+    body = `<div class="tile tint-mint"><div class="big" style="color:var(--mint)">Goal reached 🎉</div>
+      <p>You’ve saved ${egp(p.saved)} — ${egp(p.saved - g.target)} more than your target. Edit the goal to set a new one.</p></div>`;
+  } else if (!p.started) {
+    body = `<div class="tile plain"><p style="margin:0">This goal starts on ${prettyDate(g.start)}. You’ll need about <b style="color:var(--text)">${egp(p.perMonthFlat)}</b> a month over ${p.monthsLeft} month${p.monthsLeft === 1 ? "" : "s"}.</p></div>`;
+  } else if (p.overdue) {
+    body = `<div class="tile tint-coral"><div class="tl"><span class="label" style="color:var(--coral)">Deadline passed</span></div>
+      <p>${egp(p.remaining)} still to go. Edit the goal to give yourself a new deadline and Meridian will re-plan it.</p></div>`;
+  } else {
+    const monthBar = p.needThisMonth > 0 ? Math.min(1, Math.max(0, p.savedThisMonth) / p.needThisMonth) : 1;
+    const perDay = p.safeToSpend > 0 && p.daysLeft > 0 ? p.safeToSpend / p.daysLeft : 0;
+    body = `
+      <div class="tile plain"><div class="tl"><span class="label">Save this month</span><span class="label" style="color:var(--gold)">${MSHORT[parseKey(currentKey()).m]}</span></div>
+        <div class="big num">${egp(p.needThisMonth)}</div>
+        <div class="track"><div class="fillbar" style="width:${monthBar*100}%;background:var(--gold)"></div></div>
+        <p>${p.savedThisMonth >= p.needThisMonth && p.needThisMonth > 0 ? `Done for this month ✓ — you’ve kept ${egp(p.savedThisMonth)}.` : `${egp(Math.max(0, p.savedThisMonth))} kept so far · ${egp(Math.max(0, p.needThisMonth - Math.max(0, p.savedThisMonth)))} to go.`}
+        ${p.monthInc > 0 ? ` That’s ${pct(Math.min(p.needThisMonth / p.monthInc, 9.99))} of this month’s income.` : ""}</p></div>
+      ${p.latest ? `<div class="tile tint-gold"><div class="tl"><span class="label" style="color:var(--gold)">From your latest income</span></div>
+        <div class="big num">${p.latest.setAside > 0 ? `Put aside ${egp(p.latest.setAside)}` : "Nothing needed"}</div>
+        <p>${esc(catOf("income", p.latest.tx.catId)?.name || "Income")} · ${egp(p.latest.tx.amount)} on ${prettyDate(p.latest.tx.date)}.
+        ${p.latest.setAside > 0 ? (p.latest.setAside >= p.latest.tx.amount ? " Keep all of it — the goal gets paid first." : ` Keep ${pct(p.latest.setAside / p.latest.tx.amount)} of it; the rest is yours to spend.`) : " This month’s target was already covered by earlier income."}</p></div>`
+      : `<div class="tile plain"><p style="margin:0">Log your next income and Meridian will tell you exactly how much of it to put aside.</p></div>`}
+      <div class="tile plain"><div class="tl"><span class="label">Safe to spend · rest of ${MSHORT[parseKey(currentKey()).m]}</span></div>
+        <div class="big num ${p.safeToSpend < 0 ? "neg" : ""}">${p.monthInc === 0 ? "—" : egp(p.safeToSpend)}</div>
+        <p>${p.monthInc === 0 ? "Shows up once you log income this month." : p.safeToSpend < 0 ? `You’ve spent ${egp(-p.safeToSpend)} more than this month allows — the remaining months will absorb it.` : `About ${egp(perDay)} a day for the next ${p.daysLeft} day${p.daysLeft === 1 ? "" : "s"}, and you still hit this month’s target.`}</p></div>
+      ${p.projection ? `<div class="tile ${p.projection.never || p.projection.late > 0 ? "tint-coral" : "tint-mint"}">
+        <p style="margin:0;color:var(--text)">${p.projection.never
+          ? `At your recent pace you’re not saving anything, so the goal won’t be reached. You need about ${egp(p.perMonthFlat)} a month.`
+          : p.projection.late > 0
+            ? `At your recent pace (${egp(p.pace)}/month) you’d reach it in ${keyMid(p.projection.finishKey)} — ${p.projection.late} month${p.projection.late === 1 ? "" : "s"} late. Cutting spending by about ${egp(p.projection.cut)} a month gets you there on time.`
+            : `At your recent pace (${egp(p.pace)}/month) you’d reach it by ${keyMid(p.projection.finishKey)} — on time ✓`}</p></div>` : ""}`;
+  }
+  return `<div class="card goal"><div class="goal-top"><div><div class="label">Savings goal</div><div class="goal-name">${esc(g.name)}</div></div>
+      <button class="linkbtn" id="editGoal">Edit</button></div>
+    <div class="goal-amt num">${egp(Math.max(0, p.saved))} <span>of ${egp(g.target)}</span></div>
+    <div class="track"><div class="fillbar" style="width:${Math.min(1, p.pctDone)*100}%;background:${barCol}"></div></div>
+    <div class="meta"><span>${pct(Math.min(p.pctDone, 1))} saved</span><span>${p.done ? "Completed" : p.overdue ? `Was due ${keyMid(p.endKey)}` : `${p.monthsLeft} month${p.monthsLeft === 1 ? "" : "s"} left · by ${keyMid(p.endKey)}`}</span></div>
+    ${body}</div>`;
+}
+
+function renderPlan(){
   const M = monthCalc(month), cum = cumulative(month), target = S.settings.target;
   const prog = M.totInc ? Math.max(0, M.rate) / (target || 1) : 0;
   const R = 52, C = 2*Math.PI*R;
@@ -597,12 +825,17 @@ function renderSavings(){
   const hist = keys.map(k => monthCalc(k)).reverse();
   const maxAbs = Math.max(1, ...hist.map(h => Math.abs(h.savings)));
   const anyHist = hist.some(h => h.totInc || h.totExp);
-  $("#v-savings").innerHTML = `
+  $("#v-plan").innerHTML = `
+    ${goalCard()}
+    <div class="card"><button class="cta" id="openCalc"><div class="ic tint-mint" style="color:var(--mint);font-weight:700">%</div>
+      <div class="grow"><b>Interest calculator</b><small>Installments and loans, or what a deposit or certificate grows to.</small></div><span class="chev">›</span></button></div>
+
+    <div class="label section-label">This month’s savings</div>
     <div class="card"><div class="ring-wrap">
-      <div class="ring"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${R}" fill="none" stroke="var(--raised)" stroke-width="12"/>
-        <circle cx="66" cy="66" r="${R}" fill="none" stroke="${prog >= 1 ? "var(--mint)" : "var(--gold)"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${ringLen} ${C}"/></svg>
+      <div class="ring"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(--raised)" stroke-width="12"/>
+        <circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(${prog >= 1 ? "--mint" : "--gold"})" stroke-width="12" stroke-linecap="round" stroke-dasharray="${ringLen} ${C}"/></svg>
         <div class="center"><div><b class="num ${M.totInc && M.rate < 0 ? "neg" : ""}">${M.totInc ? pct(M.rate) : "—"}</b><span>SAVED</span></div></div></div>
-      <div><div class="label">Savings target</div><div style="font-size:22px;font-weight:600;margin:4px 0">${pct(target)} of income</div>
+      <div><div class="label">Savings-rate target</div><div style="font-size:22px;font-weight:600;margin:4px 0">${pct(target)} of income</div>
         <div class="delta ${M.totInc ? (prog >= 1 ? "up-good" : "") : ""}">${!M.totInc ? "Log income to track progress" : prog >= 1 ? "Target reached ✓" : `${pct(Math.min(prog,1))} of the way · ${egp(target*M.totInc - M.savings)} to go`}</div></div>
     </div></div>
     <div class="card"><div class="card-head"><div><h3>Savings tracker</h3><p class="sub">${keyName(month)} · savings = income − expenses</p></div></div>
@@ -623,10 +856,14 @@ function renderSavings(){
 }
 
 function renderSettings(){
+  const th = S.settings.theme || "system";
+  const tbtn = (k, label, a, b) => `<button data-theme-set="${k}" class="${th === k ? "on" : ""}"><span class="sw3"><i style="background:${a}"></i><i style="background:${b}"></i></span>${label}</button>`;
   const catRows = type => cats(type).map(c => `<button class="set-row" data-editcat="${type}:${c.id}"><i class="dot" style="background:${c.color};width:12px;height:12px"></i>
       <div class="grow">${esc(c.name)}${type === "expense" ? `<small>${c.budget > 0 ? "Budget " + egp(c.budget) + " / month" : "No budget"}</small>` : ""}</div><span class="chev">›</span></button>`).join("");
   $("#v-settings").innerHTML = `
-    <div class="label section-label" style="margin-top:4px">Income categories</div>
+    <div class="label section-label" style="margin-top:4px">Appearance</div>
+    <div class="theme-seg">${tbtn("system","System","#F4F2ED","#0D1117")}${tbtn("dark","Dark","#0D1117","#161B22")}${tbtn("light","Light","#F4F2ED","#FFFFFF")}</div>
+    <div class="label section-label">Income categories</div>
     <div class="set-list">${catRows("income")}<button class="set-row add" data-addcat="income">＋ Add income category</button></div>
     <div class="label section-label">Expense categories</div>
     <div class="set-list">${catRows("expense")}<button class="set-row add" data-addcat="expense">＋ Add expense category</button></div>
@@ -647,7 +884,7 @@ function renderSettings(){
 
 /* ============================================================ sheets & dialogs */
 const stack = [];
-function openSheet(html){ $("#sheet").innerHTML = `<div class="grab"></div>` + html; $("#sheet").classList.add("on"); $("#scrim").classList.add("on"); stack.push("sheet"); }
+function openSheet(html){ $("#sheet").innerHTML = `<div class="grab"></div>` + html; $("#sheet").scrollTop = 0; $("#sheet").classList.add("on"); $("#scrim").classList.add("on"); stack.push("sheet"); }
 function closeSheet(){ $("#sheet").classList.remove("on"); if (!$("#dialog").classList.contains("on")) $("#scrim").classList.remove("on"); const i = stack.lastIndexOf("sheet"); if (i > -1) stack.splice(i,1); }
 function openDialog(html){ $("#dialog").innerHTML = html; $("#dialog").classList.add("on"); $("#scrim").classList.add("on"); stack.push("dialog"); }
 function closeDialog(){ $("#dialog").classList.remove("on"); if (!$("#sheet").classList.contains("on")) $("#scrim").classList.remove("on"); const i = stack.lastIndexOf("dialog"); if (i > -1) stack.splice(i,1); }
@@ -659,9 +896,9 @@ function confirmBox(title, text, okText, danger){
   });
 }
 let toastTimer;
-function toast(text, btn, fn){
+function toast(text, btn, fn, ms){
   $("#toastText").textContent = text; $("#toastBtn").textContent = btn || ""; $("#toastBtn").onclick = () => { fn && fn(); $("#toast").classList.remove("on"); };
-  $("#toast").classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => $("#toast").classList.remove("on"), 4000);
+  $("#toast").classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => $("#toast").classList.remove("on"), ms || 4000);
 }
 $("#scrim").onclick = () => { if ($("#dialog").classList.contains("on")) return; closeSheet(); };
 
@@ -677,7 +914,6 @@ function txSheet(existing){
       : `<div class="empty" style="padding:8px 0">No ${type} categories yet — add one in Settings.</div>`;
     document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b.dataset.type === type));
     $("#saveTx").style.background = type === "income" ? "var(--mint)" : "var(--coral)";
-    $("#saveTx").style.color = type === "income" ? "#06281a" : "#3a0d08";
   };
   openSheet(`<h2>${existing ? "Edit transaction" : "New transaction"}</h2>
     <div class="seg" id="seg"><button data-type="expense" class="exp">Expense</button><button data-type="income" class="inc">Income</button></div>
@@ -693,7 +929,7 @@ function txSheet(existing){
   $("#seg").onclick = e => { const b = e.target.closest("button"); if (!b) return; type = b.dataset.type; draw(); };
   $("#catgrid").onclick = e => { const b = e.target.closest("[data-cat]"); if (!b) return; catId = b.dataset.cat; draw(); };
   $("#saveTx").onclick = () => {
-    const a = parseFloat(String($("#fAmt").value).replace(/,/g, "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+    const a = parseNum($("#fAmt").value);
     const date = $("#fDate").value;
     if (!(a > 0)) return $("#fErr").textContent = "Enter an amount greater than 0.";
     if (a >= 1e9) return $("#fErr").textContent = "That amount looks too large.";
@@ -704,7 +940,13 @@ function txSheet(existing){
     save(); closeSheet();
     month = date.slice(0,7);
     render();
-    toast(existing ? "Changes saved" : `${type === "income" ? "Income" : "Expense"} of ${amt(rec.amount)} added`);
+    let msg = existing ? "Changes saved" : `${type === "income" ? "Income" : "Expense"} of ${amt(rec.amount)} added`;
+    const gp = goalPlan();
+    if (!existing && type === "income" && gp && gp.latest && gp.latest.tx.id === rec.id && !gp.done) {
+      msg = gp.latest.setAside > 0 ? `Income added · put aside ${egp(gp.latest.setAside)} for ${gp.g.name}` : `Income added · this month’s goal target is already covered`;
+      toast(msg, "PLAN", () => setTab("plan"), 6500); return;
+    }
+    toast(msg);
   };
   if (existing) $("#delTx").onclick = async () => {
     if (!await confirmBox("Delete this transaction?", `${amt(existing.amount)} · ${catOf(existing.type, existing.catId)?.name || "Uncategorised"}`, "Delete", true)) return;
@@ -737,8 +979,8 @@ function catSheet(type, id){
     if (list.some(x => x.name.toLowerCase() === name.toLowerCase() && x !== c)) return $("#cErr").textContent = "You already have a category with that name.";
     let budget = null;
     if (type === "expense") {
-      const raw = $("#cBudget").value.replace(/,/g, "").trim();
-      if (raw) { budget = parseFloat(raw); if (!(budget > 0)) return $("#cErr").textContent = "Budget must be a positive number, or leave it empty."; }
+      const raw = $("#cBudget").value.trim();
+      if (raw) { budget = parseNum(raw); if (!(budget > 0)) return $("#cErr").textContent = "Budget must be a positive number, or leave it empty."; }
     }
     if (c) { c.name = name; c.color = color; if (type === "expense") c.budget = budget; }
     else list.push({id: uid(), name, color, ...(type === "expense" ? {budget} : {})});
@@ -753,11 +995,11 @@ function catSheet(type, id){
 function prefSheet(key){
   const label = key === "target" ? "Savings-rate target" : "Category alert";
   const help = key === "target" ? "The share of your income you aim to keep each month." : "A category is flagged when it takes more than this share of your monthly income.";
-  openSheet(`<h2>${label}</h2><p class="sub" style="margin:-8px 0 16px">${help}</p>
+  openSheet(`<h2>${label}</h2><p class="sub" style="margin:-8px 0 16px;color:var(--muted)">${help}</p>
     <div class="amount-box"><input id="pVal" class="num" inputmode="decimal" value="${Math.round(S.settings[key]*100)}"><span>%</span></div>
     <div class="err" id="pErr"></div><button class="btn" id="pSave">Save</button>`);
   $("#pSave").onclick = () => {
-    const v = parseFloat($("#pVal").value);
+    const v = parseNum($("#pVal").value);
     if (!(v >= 0 && v <= 100)) return $("#pErr").textContent = "Enter a number from 0 to 100.";
     S.settings[key] = v / 100; save(); closeSheet(); render();
   };
@@ -778,6 +1020,121 @@ function monthSheet(){
   $("#yNext").onclick = () => { year++; draw(); };
   $("#mlist").onclick = e => { const b = e.target.closest("[data-k]"); if (!b) return; month = b.dataset.k; closeSheet(); render(); };
   $("#mNow").onclick = () => { month = currentKey(); closeSheet(); render(); };
+}
+
+/* ---- savings goal */
+function goalSheet(){
+  const g = S.goal;
+  const startDef = g ? g.start : currentKey() + "-01";
+  const endFor = months => { const d = new Date(); return toIso(new Date(d.getFullYear(), d.getMonth() + months, 0)); };
+  const endDef = g ? g.end : endFor(12);
+  openSheet(`<h2>${g ? "Edit savings goal" : "New savings goal"}</h2>
+    <div class="field"><label class="label">What are you saving for?</label><input class="input" id="gName" maxlength="32" placeholder="e.g. New PC" value="${g ? esc(g.name) : ""}"></div>
+    <div class="field"><label class="label">Goal amount</label><div class="amount-box" style="margin-bottom:0"><span>EGP</span><input id="gTarget" class="num" inputmode="decimal" placeholder="20,000" value="${g ? fmt(g.target) : ""}"></div></div>
+    <div class="field"><label class="label">Reach it by</label>
+      <div class="quick" id="gQuick">${[3,6,12,18,24].map(n => `<button data-m="${n}">${n < 12 ? n + " months" : n === 12 ? "1 year" : n === 24 ? "2 years" : "18 months"}</button>`).join("")}</div>
+      <input type="date" class="input" id="gEnd" value="${endDef}"></div>
+    <div class="field"><label class="label">Count savings from</label><input type="date" class="input" id="gStart" value="${startDef}">
+      <p class="calc-note" style="margin-top:6px">Everything you keep after expenses from this date counts toward the goal.</p></div>
+    <div class="err" id="gErr"></div>
+    <button class="btn" id="gSave">${g ? "Save goal" : "Start saving"}</button>
+    ${g ? `<div class="btnrow"><button class="btn danger" id="gDel">Delete goal</button></div>` : ""}`);
+  if (!g) setTimeout(() => $("#gName").focus(), 300);
+  $("#gQuick").onclick = e => { const b = e.target.closest("[data-m]"); if (!b) return; $("#gEnd").value = endFor(+b.dataset.m); };
+  $("#gTarget").onblur = () => { const v = parseNum($("#gTarget").value); if (v > 0) $("#gTarget").value = fmt(v); };
+  $("#gSave").onclick = () => {
+    const name = $("#gName").value.trim() || "My goal";
+    const target = parseNum($("#gTarget").value), end = $("#gEnd").value, start = $("#gStart").value;
+    if (!(target > 0)) return $("#gErr").textContent = "Enter the amount you want to save.";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) return $("#gErr").textContent = "Pick a start date.";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(end) || end <= start) return $("#gErr").textContent = "The deadline must be after the start date.";
+    if (end.slice(0,7) < currentKey()) return $("#gErr").textContent = "Pick a deadline that hasn’t passed yet.";
+    S.goal = {name, target: Math.round(target*100)/100, start, end, created: g ? g.created : Date.now()};
+    save(); closeSheet(); render(); toast(g ? "Goal updated" : `Goal set — ${egp(goalPlan().needThisMonth)} to save this month`);
+  };
+  if (g) $("#gDel").onclick = async () => {
+    if (!await confirmBox("Delete this goal?", "Your transactions stay — only the goal and its plan are removed.", "Delete", true)) return;
+    S.goal = null; save(); closeSheet(); render(); toast("Goal deleted");
+  };
+}
+
+/* ---- interest calculator */
+function calcSheet(){
+  const C = S.calc;
+  const isLoan = () => C.mode === "loan";
+  const cur = () => isLoan() ? C.loan : C.save;
+  const v2 = n => (Math.round(n*100)/100);
+  const show = (n, d=2) => Number.isFinite(n) ? fmt(v2(n), Number.isInteger(v2(n)) ? 0 : d) : "";
+  const resultOf = () => { const c = cur(); return isLoan() ? Calc.loanPay(c.P, c.r, c.n, c.type) : Calc.saveFinal(c.P, c.r, c.n, c.type); };
+
+  function draw(){
+    const c = cur(), loan = isLoan();
+    $("#calcBody").innerHTML = `
+      <div class="seg small" id="typeSeg">${loan
+        ? `<button data-t="flat" class="${c.type === "flat" ? "on" : ""}">Flat rate · shops, valU</button><button data-t="reducing" class="${c.type === "reducing" ? "on" : ""}">Reducing · bank loan</button>`
+        : `<button data-t="simple" class="${c.type === "simple" ? "on" : ""}">Paid monthly · certificates</button><button data-t="compound" class="${c.type === "compound" ? "on" : ""}">Reinvested · compound</button>`}</div>
+      <div class="calc-f"><label for="cP">${loan ? "Price / amount borrowed" : "Deposit"}</label><input id="cP" class="num" inputmode="decimal" data-k="P"><span class="unit">EGP</span></div>
+      <div class="calc-f"><label for="cR">Interest rate</label><input id="cR" class="num" inputmode="decimal" data-k="r"><span class="unit">% / year</span></div>
+      <div class="calc-f"><label for="cN">Time</label><input id="cN" class="num" inputmode="decimal" data-k="n"><span class="unit">months</span><span class="hint" id="cNh"></span></div>
+      <div class="quick" id="nQuick">${[6,12,18,24,36,60].map(n => `<button data-n="${n}">${n < 12 ? n + " mo" : (n/12) + (n === 12 ? " year" : " years")}</button>`).join("")}</div>
+      <div class="calc-f result"><label for="cA">${loan ? "Monthly installment" : "You’ll have at the end"}</label><input id="cA" class="num" inputmode="decimal" data-k="A"><span class="unit">EGP</span>
+        <span class="hint">Type here to find the interest rate that gives this result.</span></div>
+      <div class="err" id="cErr"></div>
+      <div class="calc-sum" id="calcSum"></div>`;
+    fill(null);
+  }
+  function fill(skip){
+    const c = cur(), A = resultOf();
+    const set = (id, val) => { if (id !== skip) $("#" + id).value = val; };
+    set("cP", show(c.P)); set("cR", show(c.r, 2)); set("cN", show(c.n, 1)); set("cA", show(A));
+    $("#cNh").textContent = c.n >= 12 ? `= ${fmt(c.n/12, c.n % 12 ? 1 : 0)} year${c.n === 12 ? "" : "s"}` : "";
+    summary(A);
+  }
+  function summary(A){
+    const c = cur(), loan = isLoan(), el = $("#calcSum");
+    if (!Number.isFinite(A) || !(c.P > 0) || !(c.n > 0)) { el.innerHTML = ""; return; }
+    if (loan) {
+      const total = A * c.n, interest = total - c.P, share = total > 0 ? c.P / total : 1;
+      el.innerHTML = `<div class="split"><div style="width:${share*100}%;background:var(--mint)"></div><div style="flex:1;background:var(--coral)"></div></div>
+        <div class="l"><span><i class="dot" style="background:var(--mint)"></i> Price</span><b class="num">${egp(c.P, 0)}</b></div>
+        <div class="l"><span><i class="dot" style="background:var(--coral)"></i> Interest you pay</span><b class="num">${egp(interest, 0)}</b></div>
+        <div class="l"><span>Total you pay</span><b class="num">${egp(total, 0)}</b></div>
+        <div class="l"><span>Extra cost vs paying cash</span><b class="num">${pct(interest / c.P, 1)}</b></div>
+        <p class="calc-note">${c.type === "flat" ? "Flat rate: interest is charged on the full price for the whole period — how most shops and installment apps quote it. A flat rate costs more than the same reducing rate." : "Reducing balance: interest is charged only on what you still owe — how bank loans usually work."}</p>`;
+    } else {
+      const interest = A - c.P, share = A > 0 ? c.P / A : 1;
+      el.innerHTML = `<div class="split"><div style="width:${share*100}%;background:var(--gold)"></div><div style="flex:1;background:var(--mint)"></div></div>
+        <div class="l"><span><i class="dot" style="background:var(--gold)"></i> Your deposit</span><b class="num">${egp(c.P, 0)}</b></div>
+        <div class="l"><span><i class="dot" style="background:var(--mint)"></i> Interest earned</span><b class="num">${egp(interest, 0)}</b></div>
+        ${c.type === "simple" ? `<div class="l"><span>Monthly interest payout</span><b class="num">${egp(c.P * c.r / 1200, 0)}</b></div>` : `<div class="l"><span>Interest in the first month</span><b class="num">${egp(c.P * c.r / 1200, 0)}</b></div>`}
+        <div class="l"><span>Total at the end</span><b class="num">${egp(A, 0)}</b></div>
+        <p class="calc-note">${c.type === "simple" ? "Paid monthly: the bank pays the interest out each month and your deposit stays the same — how most Egyptian bank certificates work." : "Reinvested: each month’s interest is added to the balance and earns interest too."}</p>`;
+    }
+  }
+  openSheet(`<h2>Interest calculator</h2>
+    <div class="seg" id="modeSeg"><button data-m="loan" class="${C.mode === "loan" ? "on" : ""}">Loan / installments</button><button data-m="save" class="${C.mode === "save" ? "on" : ""}">Savings / certificate</button></div>
+    <div id="calcBody"></div>`);
+  draw();
+  $("#modeSeg").onclick = e => { const b = e.target.closest("[data-m]"); if (!b) return; C.mode = b.dataset.m;
+    document.querySelectorAll("#modeSeg button").forEach(x => x.classList.toggle("on", x === b)); draw(); saveSoon(); };
+  $("#calcBody").addEventListener("click", e => {
+    const t = e.target.closest("[data-t]"); if (t) { cur().type = t.dataset.t; draw(); saveSoon(); return; }
+    const q = e.target.closest("[data-n]"); if (q) { cur().n = +q.dataset.n; $("#cErr").textContent = ""; fill(null); saveSoon(); }
+  });
+  $("#calcBody").addEventListener("input", e => {
+    const inp = e.target.closest("input[data-k]"); if (!inp) return;
+    const c = cur(), k = inp.dataset.k, v = parseNum(inp.value);
+    $("#cErr").textContent = "";
+    if (!(v >= 0) || (k !== "r" && !(v > 0))) { summary(NaN); return; }
+    if (k === "A") {
+      const r = isLoan() ? Calc.loanRate(c.P, c.n, v, c.type) : Calc.saveRate(c.P, c.n, v, c.type);
+      if (r === -1) { $("#cErr").textContent = isLoan() ? "That installment repays less than the price — no interest rate gives that." : "That’s less than your deposit — no interest rate gives that."; summary(NaN); return; }
+      if (!Number.isFinite(r)) { $("#cErr").textContent = "That needs an unrealistic interest rate."; summary(NaN); return; }
+      c.r = Math.round(r*100)/100;
+    } else c[k] = v;
+    fill(inp.id); saveSoon();
+  });
+  $("#calcBody").addEventListener("focusout", e => { if (e.target.closest("input[data-k]")) fill(null); });
 }
 
 /* ---- export / import */
@@ -806,7 +1163,7 @@ $("#importFile").onchange = e => {
     e.target.value = "";
     if (!validState(s)) return toast("That file isn’t a Meridian backup");
     if (!await confirmBox("Restore this backup?", `It has ${s.tx.length} transactions and will replace the ${S.tx.length} on this phone.`, "Restore")) return;
-    S = s; save(); render(); toast("Backup restored");
+    S = upgrade(s); save(); applyTheme(); render(); toast("Backup restored");
   };
   rd.readAsText(f);
 };
@@ -823,14 +1180,17 @@ document.addEventListener("click", async e => {
   const ec = e.target.closest("[data-editcat]"); if (ec) { const [ty, id] = ec.dataset.editcat.split(":"); catSheet(ty, id); return; }
   const ac = e.target.closest("[data-addcat]"); if (ac) { catSheet(ac.dataset.addcat, null); return; }
   const pr = e.target.closest("[data-pref]"); if (pr) { prefSheet(pr.dataset.pref); return; }
+  const th = e.target.closest("[data-theme-set]"); if (th) { S.settings.theme = th.dataset.themeSet; save(); applyTheme(); renderSettings(); return; }
   const id = e.target.closest("button")?.id;
+  if (id === "newGoal" || id === "editGoal") goalSheet();
+  if (id === "openCalc") calcSheet();
   if (id === "exportJson") exportJson();
   if (id === "exportCsv") exportCsv();
   if (id === "importJson") $("#importFile").click();
   if (id === "eraseAll") {
-    if (!await confirmBox("Erase everything?", "All transactions, categories and settings on this phone will be deleted. Back up first if you might want them.", "Erase", true)) return;
+    if (!await confirmBox("Erase everything?", "All transactions, categories, goals and settings on this phone will be deleted. Back up first if you might want them.", "Erase", true)) return;
     if (!await confirmBox("Are you sure?", "This can’t be undone.", "Yes, erase all", true)) return;
-    S = defaultState(); save(); month = currentKey(); render(); toast("All data erased");
+    S = defaultState(); save(); applyTheme(); month = currentKey(); render(); toast("All data erased");
   }
 });
 /* Android back button: returns true if the app handled it */
@@ -840,7 +1200,7 @@ window.meridianBack = () => {
   if (tab !== "home") { setTab("home"); return true; }
   return false;
 };
-document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { if (window.Android) { systemDark = readSystemTheme(); applyTheme(); } render(); } });
 
 /* iPhone / web: work offline and ask the browser to keep data permanently */
 if (!window.Android && location.protocol === "https:") {
