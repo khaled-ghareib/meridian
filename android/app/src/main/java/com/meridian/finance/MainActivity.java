@@ -1,7 +1,9 @@
 package com.meridian.finance;
 
 import android.app.Activity;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import android.widget.LinearLayout;
 import androidx.core.content.FileProvider;
 import androidx.webkit.WebViewAssetLoader;
 
+import java.lang.ref.WeakReference;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +42,8 @@ public class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
     private static final String START = "https://" + HOST + "/assets/www/index.html";
     private static final int PICK_FILE = 41;
+    private static final int SMS_PERMISSION = 51;
+    private static volatile WeakReference<MainActivity> current = new WeakReference<>(null);
 
     // Dark and light colours for the strips behind the status bar and the navigation bar.
     private static final int DARK_BG = Color.parseColor("#0D1117");
@@ -132,9 +137,42 @@ public class MainActivity extends Activity {
         });
 
         web.addJavascriptInterface(new Bridge(), "Android");
+        current = new WeakReference<>(this);
 
         if (savedInstanceState != null) web.restoreState(savedInstanceState);
         else web.loadUrl(START);
+    }
+
+    /** Called by SmsReceiver: if the app is open, it reads the new bank message straight away. */
+    static void notifySmsArrived() {
+        final MainActivity a = current.get();
+        if (a == null || a.isFinishing()) return;
+        a.runOnUiThread(() -> a.web.evaluateJavascript("window.meridianSmsArrived && window.meridianSmsArrived()", null));
+    }
+
+    private boolean hasSms() {
+        return checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == SMS_PERMISSION) {
+            web.evaluateJavascript("window.meridianSmsPermission && window.meridianSmsPermission(" + hasSms() + ")", null);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        current = new WeakReference<>(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (current.get() == this) current = new WeakReference<>(null);
+        super.onDestroy();
     }
 
     private boolean isSystemDarkNow() {
@@ -251,6 +289,30 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 return null;
             }
+        }
+
+        @JavascriptInterface
+        public boolean hasSmsPermission() {
+            return hasSms();
+        }
+
+        @JavascriptInterface
+        public void requestSmsPermission() {
+            runOnUiThread(() -> requestPermissions(
+                    new String[]{Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, SMS_PERMISSION));
+        }
+
+        /** New bank messages received since the app last looked (then cleared). */
+        @JavascriptInterface
+        public String takeSmsInbox() {
+            return SmsStore.take(MainActivity.this);
+        }
+
+        /** Bank messages already in the phone's inbox from the last few days. */
+        @JavascriptInterface
+        public String readRecentSms(int days) {
+            if (!hasSms()) return "[]";
+            return SmsStore.recent(MainActivity.this, Math.max(1, Math.min(days, 365)));
         }
 
         @JavascriptInterface

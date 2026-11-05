@@ -277,6 +277,29 @@ input[type=date].input{min-height:48px}
 .yearnav button{width:40px;height:40px;border-radius:10px;background:var(--raised)}
 .foot{color:var(--faint);font-size:11.5px;text-align:center;margin:18px 0 0;line-height:1.5}
 
+/* SMS review & switches */
+.switch{width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.switch.on{background:var(--mint)}
+.switch.on::after{transform:translateX(18px)}
+.set-row.off{opacity:.45}
+.review{background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:14px;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent)}
+.review-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.review-head b{font-size:14px}
+.rv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 14px;border-top:1px solid var(--line);align-items:center}
+.rv .open{text-align:left;min-width:0;display:block;width:100%}
+.rv .m{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv .d{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv .a{font-weight:600;text-align:right}
+.rv .acts{grid-column:1/3;display:flex;gap:8px;margin-top:8px}
+.rv .acts button{flex:1;padding:8px;border-radius:10px;font-size:13px;font-weight:600;background:var(--raised)}
+.rv .acts .yes{background:var(--gold);color:var(--on-accent)}
+.tag{font-size:9.5px;font-weight:700;letter-spacing:.06em;padding:2px 5px;border-radius:5px;background:var(--raised);color:var(--muted);margin-left:6px;vertical-align:1px}
+.smsraw{background:var(--raised);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--muted);line-height:1.45;margin:-6px 0 16px;white-space:pre-wrap;word-break:break-word}
+.banner{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:color-mix(in srgb,var(--gold) 12%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:var(--r);padding:13px 14px;margin-bottom:12px;font-size:14px}
+.banner .grow{flex:1}
+.banner small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+
 /* calculator */
 .calc-f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;background:var(--raised);border:1px solid var(--line);
   border-radius:14px;padding:10px 14px;margin-bottom:10px}
@@ -354,9 +377,10 @@ function defaultState(){
     settings: {
       incomeCats: ["Allowance","Work","Gift"].map((n,i)=>({id:uid()+i,name:n,color:INC_COLORS[i]})),
       expenseCats: ["Hangouts","Transportation","Talabat / Food","Leisure"].map((n,i)=>({id:uid()+i,name:n,color:EXP_COLORS[i],budget:null})),
-      target: 0.20, threshold: 0.30, theme: "system"
+      target: 0.20, threshold: 0.30, theme: "system",
+      sms: {enabled: false, autoAdd: true}
     },
-    tx: [], goal: null, calc: defaultCalc()
+    tx: [], goal: null, calc: defaultCalc(), pending: [], smsSeen: [], rules: {}
   };
 }
 function validState(s){
@@ -367,6 +391,10 @@ function upgrade(s){
   if (!s.settings.theme) s.settings.theme = "system";
   if (s.goal === undefined) s.goal = null;
   if (!s.calc || !s.calc.loan || !s.calc.save) s.calc = defaultCalc();
+  if (!s.settings.sms) s.settings.sms = {enabled: false, autoAdd: true};
+  if (!Array.isArray(s.pending)) s.pending = [];
+  if (!Array.isArray(s.smsSeen)) s.smsSeen = [];
+  if (!s.rules || typeof s.rules !== "object") s.rules = {};
   s.version = 2;
   return s;
 }
@@ -600,6 +628,140 @@ function observations(M, P){
   return o;
 }
 
+/* ============================================================ bank SMS auto-logging (Android) */
+const HAS_SMS = !!(window.Android && Android.takeSmsInbox);
+const normDigits = t => String(t).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/٫/g, ".").replace(/٬/g, ",");
+const smsKey = (sender, body) => { let h = 0; const t = sender + "|" + body; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return String(h); };
+
+function parseSms(body){
+  const t = normDigits(body).replace(/\s+/g, " ").trim();
+  const low = t.toLowerCase();
+  if (/\b(otp|one[- ]time|verification|passcode|password|pin code|activation code)\b|رمز|كود|كلمة السر|كلمة المرور/.test(low)) return null;
+  if (/declined|failed|rejected|unsuccessful|insufficient|not completed|reversed? request|مرفوض|فشل|رفض|لم تتم|غير كاف/.test(low)) return null;
+  if (/\b(will be|due date|minimum (payment|due)|statement|installment due|reminder)\b|مستحق|تذكير|كشف حساب/.test(low)) return null;
+  // amount: first "EGP 1,234.50" / "1,234.50 LE" / "250 جنيه" that isn't a balance or limit
+  const cur = "(?:(?<![a-z])(?:egp|l\\.?e\\.?)(?![a-z])|جنيه(?:ا|ات)?|ج\\.?\\s?م\\.?)";
+  const num = "(\\d{1,3}(?:,\\d{3})+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?)";
+  const re = new RegExp(`${cur}\\s*${num}|${num}\\s*${cur}`, "gi");
+  let amount = NaN, m;
+  while ((m = re.exec(t))) {
+    const before = low.slice(Math.max(0, m.index - 28), m.index);
+    if (/balance|bal\b|avail|limit|رصيد|الحد/.test(before)) continue;
+    amount = parseFloat((m[1] || m[2]).replace(/,/g, ""));
+    break;
+  }
+  if (!(amount > 0) || amount >= 1e8) return null;
+  // direction: whichever keyword appears first
+  const DEBIT = /debit(ed)?|charged|purchase|spent|\bpaid\b|payment (of|to)|withdraw(al|n)?|deducted|\bsent\b|\bpos\b|transfer(red)? to|cash out|خصم|شراء|سحب|دفع|تحويل (?:الى|إلى|ل)|إرسال|ارسال|مسحوب/;
+  const CREDIT = /credit(ed)?(?! card)|received|deposit(ed)?|salary|refund(ed)?|cash ?back|\badded\b|transfer(red)? from|incoming|إضافة|اضافة|ايداع|إيداع|استلام|استلمت|تحويل من|وارد|راتب|مرتب|مرتجع|استرداد/;
+  let d = low.search(DEBIT), c = low.search(CREDIT);
+  // "transfer" with no direction word: into your account = income, otherwise money sent
+  if (d < 0 && c < 0 && /تحويل|transfer/.test(low)) {
+    if (/(?:إلى|الى|to|into) (?:حساب(?:ك|كم)|محفظت(?:ك|كم)|your)/.test(low)) c = 0; else d = 0;
+  }
+  if (d < 0 && c < 0) return null;
+  const type = c >= 0 && (d < 0 || c < d) ? "income" : "expense";
+  // merchant / counterparty
+  let merchant = "";
+  const pats = [
+    /\b(?:at|@)\s+([A-Za-z0-9&'*.\-\/ ]{2,40}?)(?=\s+(?:on|using|with|for|via|dated|date|avail|available|bal|balance|ref|card|in)\b|[.,;:]|$)/i,
+    /\b(?:to|from)\s+(?!your\b|ur\b|acc|card|wallet)([A-Za-z0-9&'*.\-\/ ]{2,40}?)(?=\s+(?:on|using|with|for|via|ref|avail|bal|balance|dated)\b|[.,;:]|$)/i,
+    /(?:لدى|لدي|عند|من|إلى|الى)\s+(?!حساب|بطاق|محفظ|رقم)([^\d،,\n*]{2,30}?)(?=\s+(?:بتاريخ|يوم|في|رصيد|الرصيد|بنجاح)|[،,]|\.\s|\.$|$)/
+  ];
+  for (const p of pats) { const mm = p.exec(t); if (mm) { merchant = mm[1].replace(/\*+/g, " ").replace(/\s+/g, " ").trim(); if (merchant) break; } }
+  if (/^(your|the|a|an|account|card)$/i.test(merchant)) merchant = "";
+  return {type, amount: Math.round(amount*100)/100, merchant: merchant.slice(0, 32)};
+}
+
+const CAT_HINTS = [
+  {kw: /talabat|elmenus|breadfast|instashop|rabbit|mcdonald|kfc|burger|pizza|hardee|cook ?door|buffalo|restaurant|food|grocer|carrefour|spinneys|kazyon|seoudi|metro market|hyper|طلبات|مطعم|بقالة/, name: /food|talabat|eat|grocer|meal|طعام|اكل|أكل/},
+  {kw: /uber|careem|didi|indrive|swvl|\bmetro\b|fuel|petrol|wataniya|wataneya|chillout|total ?energ|shell|mobil|emarat misr|parking|toll|bolt|اوبر|أوبر|مترو|بنزين|وقود/, name: /transport|car|fuel|uber|ride|مواصلات|نقل/},
+  {kw: /steam|playstation|\bpsn\b|xbox|nintendo|epic ?games|riot|netflix|spotify|anghami|shahid|\bosn\b|watch ?it|cinema|\bvox\b|bowling|gaming|game/, name: /leisure|fun|game|entertain|hobby|ترفيه/},
+  {kw: /caf[eé]|coffee|starbucks|costa|cilantro|\btbs\b|lounge|shisha|كافيه|قهوة/, name: /hangout|going out|friends|cafe|خروج/},
+  {kw: /salary|payroll|راتب|مرتب/, name: /work|salary|job|عمل|راتب/, type: "income"}
+];
+function guessCat(type, merchant, body){
+  const rule = merchant && S.rules[type + ":" + merchant.toLowerCase()];
+  if (rule && catOf(type, rule)) return {catId: rule, sure: true};
+  const text = (merchant + " " + body).toLowerCase();
+  for (const h of CAT_HINTS) {
+    if (h.type && h.type !== type) continue;
+    if (h.kw.test(text)) { const c = cats(type).find(x => h.name.test(x.name.toLowerCase())); if (c) return {catId: c.id, sure: true}; }
+  }
+  const named = cats(type).find(x => x.name.length > 2 && text.includes(x.name.toLowerCase()));
+  if (named) return {catId: named.id, sure: true};
+  return {catId: null, sure: false};
+}
+function learnRule(type, merchant, catId){
+  if (!merchant || !catId) return;
+  S.rules[type + ":" + merchant.toLowerCase()] = catId;
+}
+function looksDuplicate(type, amount, date){
+  const [y,m,d] = date.split("-").map(Number);
+  const near = [-1,0,1].map(k => toIso(new Date(y, m-1, d+k)));
+  return S.tx.some(t => t.type === type && Math.abs(t.amount - amount) < 0.01 && near.includes(t.date));
+}
+/* Turns raw messages [{sender, body, time}] into transactions or review items. */
+function ingestSms(list){
+  const seen = new Set(S.smsSeen);
+  let added = 0, review = 0, lastAdded = null;
+  for (const msg of list) {
+    const key = smsKey(msg.sender || "", msg.body || "");
+    if (seen.has(key)) continue;
+    seen.add(key); S.smsSeen.push(key);
+    const p = parseSms(msg.body || ""); if (!p) continue;
+    const date = toIso(new Date(Number(msg.time) || Date.now()));
+    const g = guessCat(p.type, p.merchant, msg.body || "");
+    const dup = looksDuplicate(p.type, p.amount, date);
+    const item = {id: uid(), type: p.type, amount: p.amount, date, merchant: p.merchant, catId: g.catId,
+      sender: msg.sender || "", raw: msg.body || "", dup};
+    if (S.settings.sms.autoAdd && g.sure && !dup) {
+      const rec = {id: uid(), type: p.type, amount: p.amount, catId: g.catId, date, note: p.merchant, created: Date.now(), source: "sms"};
+      S.tx.push(rec); added++; lastAdded = rec;
+    } else { S.pending.push(item); review++; }
+  }
+  if (S.smsSeen.length > 3000) S.smsSeen = S.smsSeen.slice(-3000);
+  if (added || review || list.length) save();
+  return {added, review, lastAdded};
+}
+function smsSummary(r, quiet){
+  if (!r.added && !r.review) { if (!quiet) toast("No new bank transactions found"); return; }
+  const parts = [];
+  if (r.added) parts.push(`${r.added} logged`);
+  if (r.review) parts.push(`${r.review} to review`);
+  const gp = goalPlan();
+  if (r.added === 1 && !r.review && r.lastAdded && r.lastAdded.type === "income" && gp && gp.latest && gp.latest.tx.id === r.lastAdded.id && gp.latest.setAside > 0) {
+    toast(`Income of ${amt(r.lastAdded.amount)} logged from SMS · put aside ${egp(gp.latest.setAside)} for ${gp.g.name}`, "PLAN", () => setTab("plan"), 7000); return;
+  }
+  toast(`From your bank texts: ${parts.join(", ")}`, r.review ? "REVIEW" : "", r.review ? () => setTab("activity") : null, 6000);
+}
+function pullSmsInbox(quiet){
+  if (!HAS_SMS) return;
+  let list = [];
+  try { list = JSON.parse(Android.takeSmsInbox() || "[]"); } catch(e) { list = []; }
+  if (!S.settings.sms.enabled || !list.length) return;
+  const r = ingestSms(list);
+  render(); smsSummary(r, true);
+}
+function scanRecentSms(days){
+  if (!HAS_SMS) return;
+  let list = [];
+  try { list = JSON.parse(Android.readRecentSms(days) || "[]"); } catch(e) { list = []; }
+  const r = ingestSms(list);
+  render(); smsSummary(r, false);
+}
+window.meridianSmsArrived = () => pullSmsInbox(true);
+window.meridianSmsPermission = granted => {
+  if (granted) {
+    S.settings.sms.enabled = true; save(); render();
+    toast("Bank texts will now be logged automatically");
+    setTimeout(() => scanRecentSms(30), 600);
+  } else {
+    S.settings.sms.enabled = false; save(); render();
+    toast("SMS permission wasn’t given — you can allow it from Settings");
+  }
+};
+
 /* ============================================================ UI state */
 let tab = "home", month = currentKey(), actFilter = "all";
 const titles = {home:"Overview", activity:"Activity", plan:"Plan", settings:"Settings"};
@@ -693,7 +855,9 @@ function renderHome(){
   const cmpMax = Math.max(M.totInc, M.totExp, Math.abs(M.savings), 1);
   const health = M.expCats.filter(c => c.amount > 0 || c.budget > 0);
 
+  const pend = S.pending.length;
   $("#v-home").innerHTML = `
+    ${pend ? `<button class="banner" id="goReview"><span style="font-size:18px">✉</span><div class="grow"><b>${pend} bank text${pend === 1 ? "" : "s"} to review</b><small>Confirm the category and they’re logged</small></div><span class="chev">›</span></button>` : ""}
     <div class="card hero">
       <div class="label">Remaining balance</div>
       <div class="big num ${M.savings < 0 ? "neg" : ""}">${egp(M.savings)}</div>
@@ -753,7 +917,15 @@ function renderActivity(){
   const groups = {};
   for (const t of list) (groups[t.date] ||= []).push(t);
   const chip = (k, l) => `<button class="chip ${actFilter === k ? "on" : ""}" data-filter="${k}">${l}</button>`;
-  $("#v-activity").innerHTML = `
+  const pend = [...S.pending].sort((a,b) => b.date.localeCompare(a.date));
+  const reviewHtml = pend.length ? `<div class="review"><div class="review-head"><b>✉ To review · ${pend.length}</b>
+      <button class="linkbtn" id="skipAll">Skip all</button></div>
+    ${pend.map(p => { const c = p.catId ? catOf(p.type, p.catId) : null; return `<div class="rv">
+      <button class="open" data-pend="${p.id}"><div class="m">${esc(p.merchant || (p.type === "income" ? "Money received" : "Payment"))}</div>
+        <div class="d">${prettyDate(p.date)} · ${c ? esc(c.name) : "Pick a category"}${p.dup ? " · maybe already logged" : ""}</div></button>
+      <div class="a num ${p.type === "income" ? "pos" : ""}">${p.type === "income" ? "+" : "−"}${fmt(p.amount, p.amount % 1 ? 2 : 0)}</div>
+      <div class="acts"><button data-pskip="${p.id}">Skip</button>${c ? `<button class="yes" data-padd="${p.id}">Add as ${esc(c.name)}</button>` : `<button class="yes" data-pend="${p.id}">Choose category</button>`}</div></div>`; }).join("")}</div>` : "";
+  $("#v-activity").innerHTML = `${reviewHtml}
     <div class="sumrow"><div><div class="label" style="color:var(--mint)">In</div><div class="v num">${egp(M.totInc)}</div></div>
       <div><div class="label" style="color:var(--coral)">Out</div><div class="v num">${egp(M.totExp)}</div></div>
       <div><div class="label" style="color:var(--gold)">Left</div><div class="v num ${M.savings<0?"neg":""}">${egp(M.savings)}</div></div></div>
@@ -764,7 +936,7 @@ function renderActivity(){
         <div class="txlist">${day.map(t => {
           const c = catOf(t.type, t.catId), col = c ? c.color : OTHER, nm = c ? c.name : "Uncategorised";
           return `<button class="tx" data-tx="${t.id}"><div class="av" style="background:${col}26;color:${col}">${esc(nm.charAt(0).toUpperCase())}</div>
-            <div style="min-width:0"><div class="nm">${esc(nm)}</div><div class="nt">${t.note ? esc(t.note) : (t.type === "income" ? "Income" : "Expense")}</div></div>
+            <div style="min-width:0"><div class="nm">${esc(nm)}${t.source === "sms" ? `<span class="tag">SMS</span>` : ""}</div><div class="nt">${t.note ? esc(t.note) : (t.type === "income" ? "Income" : "Expense")}</div></div>
             <div class="am num ${t.type === "income" ? "pos" : ""}">${t.type === "income" ? "+" : "−"}${fmt(t.amount, t.amount % 1 ? 2 : 0)}</div></button>`;
         }).join("")}</div></div>`;
     }).join("") : `<div class="card empty"><b>No ${actFilter === "all" ? "transactions" : actFilter === "income" ? "income" : "expenses"} in ${keyName(month)}</b>Tap the gold + button to add one.</div>`}`;
@@ -863,6 +1035,13 @@ function renderSettings(){
   $("#v-settings").innerHTML = `
     <div class="label section-label" style="margin-top:4px">Appearance</div>
     <div class="theme-seg">${tbtn("system","System","#F4F2ED","#0D1117")}${tbtn("dark","Dark","#0D1117","#161B22")}${tbtn("light","Light","#F4F2ED","#FFFFFF")}</div>
+    ${HAS_SMS ? `<div class="label section-label">Auto-logging</div>
+    <div class="set-list">
+      <button class="set-row" id="smsToggle"><div class="grow">Log bank texts automatically<small>Reads bank & wallet SMS on this phone only</small></div><span class="switch ${S.settings.sms.enabled ? "on" : ""}"></span></button>
+      <button class="set-row ${S.settings.sms.enabled ? "" : "off"}" id="smsAuto"><div class="grow">Add straight away when sure<small>Off = everything waits in “To review”</small></div><span class="switch ${S.settings.sms.autoAdd ? "on" : ""}"></span></button>
+      <button class="set-row ${S.settings.sms.enabled ? "" : "off"}" id="smsScan"><div class="grow">Scan the last 30 days<small>Picks up bank texts you already have</small></div><span class="chev">›</span></button>
+      ${Object.keys(S.rules).length ? `<button class="set-row" id="smsRules"><div class="grow">Forget learned categories<small>${Object.keys(S.rules).length} shop${Object.keys(S.rules).length === 1 ? "" : "s"} remembered</small></div><span class="chev">›</span></button>` : ""}
+    </div>` : ""}
     <div class="label section-label">Income categories</div>
     <div class="set-list">${catRows("income")}<button class="set-row add" data-addcat="income">＋ Add income category</button></div>
     <div class="label section-label">Expense categories</div>
@@ -903,10 +1082,11 @@ function toast(text, btn, fn, ms){
 $("#scrim").onclick = () => { if ($("#dialog").classList.contains("on")) return; closeSheet(); };
 
 /* ---- add / edit transaction */
-function txSheet(existing){
-  let type = existing ? existing.type : "expense";
-  let catId = existing ? existing.catId : null;
-  const defDate = existing ? existing.date : (month === currentKey() ? isoToday() : `${month}-01`);
+function txSheet(existing, pendingItem){
+  const pf = pendingItem || null;
+  let type = existing ? existing.type : pf ? pf.type : "expense";
+  let catId = existing ? existing.catId : pf ? pf.catId : null;
+  const defDate = existing ? existing.date : pf ? pf.date : (month === currentKey() ? isoToday() : `${month}-01`);
   const draw = () => {
     const list = cats(type);
     if (catId && !list.find(c => c.id === catId) && !(existing && existing.catId === catId && existing.type === type)) catId = null;
@@ -915,17 +1095,22 @@ function txSheet(existing){
     document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b.dataset.type === type));
     $("#saveTx").style.background = type === "income" ? "var(--mint)" : "var(--coral)";
   };
-  openSheet(`<h2>${existing ? "Edit transaction" : "New transaction"}</h2>
+  const preAmt = existing ? existing.amount : pf ? pf.amount : "";
+  const preNote = existing ? (existing.note || "") : pf ? pf.merchant : "";
+  openSheet(`<h2>${existing ? "Edit transaction" : pf ? "Review bank text" : "New transaction"}</h2>
+    ${pf ? `<div class="smsraw">${esc(pf.raw)}</div>` : ""}
     <div class="seg" id="seg"><button data-type="expense" class="exp">Expense</button><button data-type="income" class="inc">Income</button></div>
-    <div class="amount-box"><span>EGP</span><input id="fAmt" class="num" inputmode="decimal" placeholder="0" autocomplete="off" value="${existing ? existing.amount : ""}"></div>
+    <div class="amount-box"><span>EGP</span><input id="fAmt" class="num" inputmode="decimal" placeholder="0" autocomplete="off" value="${preAmt}"></div>
     <div class="field"><label class="label">Category</label><div class="catgrid" id="catgrid"></div></div>
     <div class="field"><label class="label">Date</label><input type="date" class="input" id="fDate" value="${defDate}" min="2000-01-01" max="2100-12-31"></div>
-    <div class="field"><label class="label">Note <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label><input class="input" id="fNote" maxlength="80" placeholder="e.g. dinner with friends" value="${existing ? esc(existing.note || "") : ""}"></div>
+    <div class="field"><label class="label">Note <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label><input class="input" id="fNote" maxlength="80" placeholder="e.g. dinner with friends" value="${esc(preNote)}"></div>
     <div class="err" id="fErr"></div>
-    <button class="btn" id="saveTx">${existing ? "Save changes" : "Add transaction"}</button>
+    <button class="btn" id="saveTx">${existing ? "Save changes" : pf ? "Add transaction" : "Add transaction"}</button>
+    ${pf ? `<div class="btnrow"><button class="btn ghost" id="skipPend">Skip — not a transaction</button></div>` : ""}
     ${existing ? `<div class="btnrow"><button class="btn danger" id="delTx">Delete</button></div>` : ""}`);
   draw();
-  if (!existing) setTimeout(() => $("#fAmt").focus(), 300);
+  if (!existing && !pf) setTimeout(() => $("#fAmt").focus(), 300);
+  if (pf) $("#skipPend").onclick = () => { S.pending = S.pending.filter(x => x.id !== pf.id); save(); closeSheet(); render(); toast("Skipped"); };
   $("#seg").onclick = e => { const b = e.target.closest("button"); if (!b) return; type = b.dataset.type; draw(); };
   $("#catgrid").onclick = e => { const b = e.target.closest("[data-cat]"); if (!b) return; catId = b.dataset.cat; draw(); };
   $("#saveTx").onclick = () => {
@@ -936,7 +1121,11 @@ function txSheet(existing){
     if (!catId) return $("#fErr").textContent = "Pick a category.";
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < "2000-01-01" || date > "2100-12-31") return $("#fErr").textContent = "Pick a valid date.";
     const rec = {id: existing ? existing.id : uid(), type, amount: Math.round(a*100)/100, catId, date, note: $("#fNote").value.trim(), created: existing ? existing.created : Date.now()};
+    const fromSms = pf || (existing && existing.source === "sms");
+    if (fromSms) rec.source = "sms";
     if (existing) S.tx[S.tx.findIndex(t => t.id === existing.id)] = rec; else S.tx.push(rec);
+    if (pf) { S.pending = S.pending.filter(x => x.id !== pf.id); learnRule(type, pf.merchant, catId); }
+    else if (existing && existing.source === "sms" && existing.catId !== catId) learnRule(type, existing.note, catId);
     save(); closeSheet();
     month = date.slice(0,7);
     render();
@@ -1180,9 +1369,27 @@ document.addEventListener("click", async e => {
   const ec = e.target.closest("[data-editcat]"); if (ec) { const [ty, id] = ec.dataset.editcat.split(":"); catSheet(ty, id); return; }
   const ac = e.target.closest("[data-addcat]"); if (ac) { catSheet(ac.dataset.addcat, null); return; }
   const pr = e.target.closest("[data-pref]"); if (pr) { prefSheet(pr.dataset.pref); return; }
+  const pe = e.target.closest("[data-pend]"); if (pe) { const it = S.pending.find(x => x.id === pe.dataset.pend); if (it) txSheet(null, it); return; }
+  const ps = e.target.closest("[data-pskip]"); if (ps) { S.pending = S.pending.filter(x => x.id !== ps.dataset.pskip); save(); render(); return; }
+  const pa = e.target.closest("[data-padd]"); if (pa) {
+    const it = S.pending.find(x => x.id === pa.dataset.padd); if (!it || !it.catId) return;
+    S.tx.push({id: uid(), type: it.type, amount: it.amount, catId: it.catId, date: it.date, note: it.merchant, created: Date.now(), source: "sms"});
+    learnRule(it.type, it.merchant, it.catId);
+    S.pending = S.pending.filter(x => x.id !== it.id); save(); render(); toast(`${it.type === "income" ? "Income" : "Expense"} of ${amt(it.amount)} added`); return;
+  }
   const th = e.target.closest("[data-theme-set]"); if (th) { S.settings.theme = th.dataset.themeSet; save(); applyTheme(); renderSettings(); return; }
   const id = e.target.closest("button")?.id;
   if (id === "newGoal" || id === "editGoal") goalSheet();
+  if (id === "goReview") setTab("activity");
+  if (id === "skipAll") { if (await confirmBox("Skip all?", `${S.pending.length} bank text${S.pending.length === 1 ? "" : "s"} will be dismissed without logging.`, "Skip all")) { S.pending = []; save(); render(); } }
+  if (id === "smsToggle") {
+    if (S.settings.sms.enabled) { S.settings.sms.enabled = false; save(); render(); toast("Bank texts won’t be logged"); }
+    else if (Android.hasSmsPermission()) window.meridianSmsPermission(true);
+    else if (await confirmBox("Read your bank texts?", "Android will ask to let Meridian read SMS. Only messages with an EGP amount are used, and they never leave this phone — the app has no internet access.", "Continue")) Android.requestSmsPermission();
+  }
+  if (id === "smsAuto" && S.settings.sms.enabled) { S.settings.sms.autoAdd = !S.settings.sms.autoAdd; save(); render(); }
+  if (id === "smsScan" && S.settings.sms.enabled) scanRecentSms(30);
+  if (id === "smsRules" && await confirmBox("Forget learned categories?", "Meridian will go back to guessing categories for shops you’ve corrected before.", "Forget")) { S.rules = {}; save(); render(); }
   if (id === "openCalc") calcSheet();
   if (id === "exportJson") exportJson();
   if (id === "exportCsv") exportCsv();
@@ -1200,7 +1407,7 @@ window.meridianBack = () => {
   if (tab !== "home") { setTab("home"); return true; }
   return false;
 };
-document.addEventListener("visibilitychange", () => { if (!document.hidden) { if (window.Android) { systemDark = readSystemTheme(); applyTheme(); } render(); } });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { if (window.Android) { systemDark = readSystemTheme(); applyTheme(); } pullSmsInbox(true); render(); } });
 
 /* iPhone / web: work offline and ask the browser to keep data permanently */
 if (!window.Android && location.protocol === "https:") {
@@ -1209,6 +1416,7 @@ if (!window.Android && location.protocol === "https:") {
 }
 
 render();
+setTimeout(() => pullSmsInbox(true), 400);
 </script>
 </body>
 </html>
