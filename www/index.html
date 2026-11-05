@@ -640,7 +640,7 @@ function parseSms(body){
   if (/declined|failed|rejected|unsuccessful|insufficient|not completed|reversed? request|مرفوض|فشل|رفض|لم تتم|غير كاف/.test(low)) return null;
   if (/\b(will be|due date|minimum (payment|due)|statement|installment due|reminder)\b|مستحق|تذكير|كشف حساب/.test(low)) return null;
   // amount: first "EGP 1,234.50" / "1,234.50 LE" / "250 جنيه" that isn't a balance or limit
-  const cur = "(?:(?<![a-z])(?:egp|l\\.?e\\.?)(?![a-z])|جنيه(?:ا|ات)?|ج\\.?\\s?م\\.?)";
+  const cur = "(?:(?<![a-z])(?:egp|l\\.?e\\.?)(?![a-z])|جنيه(?:ا|ات)?|(?<![\\u0600-\\u06FF])ج\\.?\\s?م\\.?(?![\\u0600-\\u06FF]))";
   const num = "(\\d{1,3}(?:,\\d{3})+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?)";
   const re = new RegExp(`${cur}\\s*${num}|${num}\\s*${cur}`, "gi");
   let amount = NaN, m;
@@ -652,8 +652,8 @@ function parseSms(body){
   }
   if (!(amount > 0) || amount >= 1e8) return null;
   // direction: whichever keyword appears first
-  const DEBIT = /debit(ed)?|charged|purchase|spent|\bpaid\b|payment (of|to)|withdraw(al|n)?|deducted|\bsent\b|\bpos\b|transfer(red)? to|cash out|خصم|شراء|سحب|دفع|تحويل (?:الى|إلى|ل)|إرسال|ارسال|مسحوب/;
-  const CREDIT = /credit(ed)?(?! card)|received|deposit(ed)?|salary|refund(ed)?|cash ?back|\badded\b|transfer(red)? from|incoming|إضافة|اضافة|ايداع|إيداع|استلام|استلمت|تحويل من|وارد|راتب|مرتب|مرتجع|استرداد/;
+  const DEBIT = /debit(ed)?|charged|purchase|spent|\bpaid\b|payment (of|to)|withdraw(al|n)?|deducted|\bsent\b|\bpos\b|transfer(red)? to|cash out|قمت ب(?:تحويل|إرسال|ارسال|دفع|سداد|شراء)|خصم|شراء|سحب|دفع|سداد|تحويل (?:الى|إلى)|إرسال|ارسال|مسحوب/;
+  const CREDIT = /credit(ed)?(?! card)|received|deposit(ed)?|salary|refund(ed)?|cash ?back|\badded\b|transfer(red)? from|incoming|استقبلت|استقبال|تم استلام|إضافة|اضافة|ايداع|إيداع|استلام|استلمت|تحويل من|وارد|راتب|مرتب|مرتجع|استرداد/;
   let d = low.search(DEBIT), c = low.search(CREDIT);
   // "transfer" with no direction word: into your account = income, otherwise money sent
   if (d < 0 && c < 0 && /تحويل|transfer/.test(low)) {
@@ -670,6 +670,7 @@ function parseSms(body){
   ];
   for (const p of pats) { const mm = p.exec(t); if (mm) { merchant = mm[1].replace(/\*+/g, " ").replace(/\s+/g, " ").trim(); if (merchant) break; } }
   if (/^(your|the|a|an|account|card)$/i.test(merchant)) merchant = "";
+  if (!merchant && /instapay|انستاباي|إنستاباي|لحظي|19033/.test(low)) merchant = "InstaPay";
   return {type, amount: Math.round(amount*100)/100, merchant: merchant.slice(0, 32)};
 }
 
