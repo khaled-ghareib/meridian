@@ -353,6 +353,7 @@ input[type=date].input{min-height:48px}
 <div class="dialog" id="dialog"></div>
 <div class="toast" id="toast"><span id="toastText"></span><button id="toastBtn"></button></div>
 <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+<input type="file" id="importTexts" accept=".txt,text/plain" class="hidden">
 
 <script>
 "use strict";
@@ -674,24 +675,46 @@ function parseSms(body){
   return {type, amount: Math.round(amount*100)/100, merchant: merchant.slice(0, 32)};
 }
 
-const CAT_HINTS = [
-  {kw: /talabat|elmenus|breadfast|instashop|rabbit|mcdonald|kfc|burger|pizza|hardee|cook ?door|buffalo|restaurant|food|grocer|carrefour|spinneys|kazyon|seoudi|metro market|hyper|طلبات|مطعم|بقالة/, name: /food|talabat|eat|grocer|meal|طعام|اكل|أكل/},
-  {kw: /uber|careem|didi|indrive|swvl|\bmetro\b|fuel|petrol|wataniya|wataneya|chillout|total ?energ|shell|mobil|emarat misr|parking|toll|bolt|اوبر|أوبر|مترو|بنزين|وقود/, name: /transport|car|fuel|uber|ride|مواصلات|نقل/},
-  {kw: /steam|playstation|\bpsn\b|xbox|nintendo|epic ?games|riot|netflix|spotify|anghami|shahid|\bosn\b|watch ?it|cinema|\bvox\b|bowling|gaming|game/, name: /leisure|fun|game|entertain|hobby|ترفيه/},
-  {kw: /caf[eé]|coffee|starbucks|costa|cilantro|\btbs\b|lounge|shisha|كافيه|قهوة/, name: /hangout|going out|friends|cafe|خروج/},
-  {kw: /salary|payroll|راتب|مرتب/, name: /work|salary|job|عمل|راتب/, type: "income"}
+/* Category guessing. When nothing you made fits, Meridian creates a sensible category itself. */
+const AUTO_CATS = [
+  {type: "expense", kw: /\bfees?\b|commission|annual fee|رسوم|عمولة|مصاريف (?:اصدار|إصدار|ادارية|إدارية)/, name: /fee|charge|رسوم/, create: "Bank fees"},
+  {type: "expense", kw: /\batm\b|cash withdrawal|withdrawal|سحب نقدي|سحب|صراف/, name: /cash|atm|withdraw|سحب/, create: "Cash withdrawal"},
+  {type: "expense", kw: /talabat|elmenus|breadfast|mrsool|mcdonald|kfc|burger|pizza|hardee|cook ?door|buffalo|restaurant|shawarma|koshary|koshari|طلبات|مطعم|كشري|شاورما/, name: /food|talabat|eat|meal|delivery|طعام|اكل|أكل/, create: "Food & delivery"},
+  {type: "expense", kw: /carrefour|spinneys|kazyon|seoudi|metro market|hyper|grocer|supermarket|kheir zaman|instashop|rabbit|بقالة|سوبر ?ماركت|كازيون|خير زمان/, name: /grocer|supermarket|بقالة/, create: "Groceries"},
+  {type: "expense", kw: /uber|careem|didi|indrive|swvl|\bmetro\b|fuel|petrol|wataniya|wataneya|chillout|total ?energ|shell|mobil|emarat misr|parking|toll|bolt|اوبر|أوبر|مترو|بنزين|وقود/, name: /transport|car|fuel|uber|ride|مواصلات|نقل/, create: "Transportation"},
+  {type: "expense", kw: /steam|playstation|\bpsn\b|xbox|nintendo|epic ?games|riot|netflix|spotify|anghami|shahid|\bosn\b|watch ?it|cinema|\bvox\b|bowling|gaming|game/, name: /leisure|fun|game|entertain|hobby|ترفيه/, create: "Entertainment"},
+  {type: "expense", kw: /caf[eé]|coffee|starbucks|costa|cilantro|\btbs\b|lounge|shisha|كافيه|قهوة/, name: /hangout|going out|friends|cafe|خروج/, create: "Cafés & hangouts"},
+  {type: "expense", kw: /amazon|\bnoon\b|jumia|b\.?\s?tech|\b2b\b|raya|zara|h&m|lc ?waikiki|defacto|ikea|\bmall\b|store|shop|متجر|مول/, name: /shop|store|تسوق/, create: "Shopping"},
+  {type: "expense", kw: /telecom egypt|\bwe (?:internet|bill|recharge)|vodafone(?! cash)|orange(?! cash)|etisalat(?! cash)|e& (?!cash)|electric|water bill|gas bill|internet|recharge|top ?up|كهرباء|غاز|مياه|شحن|فاتورة|المصرية للاتصالات/, name: /bill|recharge|utilit|فواتير|فاتورة/, create: "Bills & recharge"},
+  {type: "expense", kw: /pharmac|ezaby|seif|hospital|clinic|doctor|lab(?:oratory)?\b|صيدلي|مستشفى|عيادة|دكتور|معمل/, name: /health|medic|pharma|صحة|علاج/, create: "Health"},
+  {type: "income", kw: /salary|payroll|راتب|مرتب/, name: /work|salary|job|عمل|راتب/, create: "Salary"},
+  {type: "income", kw: /refund|cash ?back|reversal|مرتجع|استرداد/, name: /refund|cashback|استرداد/, create: "Refunds"},
+  {type: "income", kw: /deposit|ايداع|إيداع/, name: /deposit|ايداع|إيداع/, create: "Deposits"},
 ];
+const TRANSFER_KW = /instapay|انستاباي|إنستاباي|لحظي|تحويل|transfer|19033|wallet|محفظ|vodafone cash|فودافون كاش|orange cash|etisalat cash|e& cash|fawry|فوري/;
+function ensureCat(type, nameRe, createName){
+  const list = cats(type);
+  let c = list.find(x => nameRe.test(x.name.toLowerCase())) || list.find(x => x.name.toLowerCase() === createName.toLowerCase());
+  if (c) return c.id;
+  const palette = type === "income" ? INC_COLORS : EXP_COLORS;
+  const color = palette.find(p => !list.some(x => x.color === p)) || palette[list.length % palette.length];
+  c = {id: uid(), name: createName, color, auto: true, ...(type === "expense" ? {budget: null} : {})};
+  list.push(c);
+  return c.id;
+}
 function guessCat(type, merchant, body){
   const rule = merchant && S.rules[type + ":" + merchant.toLowerCase()];
   if (rule && catOf(type, rule)) return {catId: rule, sure: true};
   const text = (merchant + " " + body).toLowerCase();
-  for (const h of CAT_HINTS) {
-    if (h.type && h.type !== type) continue;
-    if (h.kw.test(text)) { const c = cats(type).find(x => h.name.test(x.name.toLowerCase())); if (c) return {catId: c.id, sure: true}; }
-  }
-  const named = cats(type).find(x => x.name.length > 2 && text.includes(x.name.toLowerCase()));
+  const wordIn = (w, t) => { const e = w.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); return new RegExp(`(^|[^a-z0-9\u0600-\u06FF])${e}($|[^a-z0-9\u0600-\u06FF])`).test(t); };
+  const named = cats(type).find(x => x.name.length > 2 && wordIn(x.name, text));
   if (named) return {catId: named.id, sure: true};
-  return {catId: null, sure: false};
+  for (const h of AUTO_CATS) {
+    if (h.type === type && h.kw.test(text)) return {catId: ensureCat(type, h.name, h.create), sure: true};
+  }
+  if (TRANSFER_KW.test(text)) return {catId: ensureCat(type, /transfer|تحويل|instapay/, "Bank transfer"), sure: true};
+  // nothing recognisable: suggest "Other" but let you confirm it
+  return {catId: ensureCat(type, /^other/, type === "income" ? "Other income" : "Other"), sure: false};
 }
 function learnRule(type, merchant, catId){
   if (!merchant || !catId) return;
@@ -751,6 +774,49 @@ function scanRecentSms(days){
   const r = ingestSms(list);
   render(); smsSummary(r, false);
 }
+/* iPhone: messages saved by a Shortcuts automation into a text file, one per "##MERIDIAN##" block */
+function parseTextsFile(text){
+  const out = [], now = Date.now();
+  const raw = String(text || "").replace(/\r/g, "");
+  const chunks = raw.includes("##MERIDIAN##") ? raw.split("##MERIDIAN##") : raw.split(/\n\s*\n/);
+  for (const ch of chunks) {
+    const c = ch.trim(); if (!c) continue;
+    let time = now, body = c;
+    const nl = c.indexOf("\n");
+    const first = nl >= 0 ? c.slice(0, nl).trim() : "";
+    const t = first ? Date.parse(first) : NaN;
+    if (Number.isFinite(t)) { time = t; body = c.slice(nl + 1).trim(); }
+    if (body) out.push({sender: "", body, time});
+  }
+  return out;
+}
+function iosSetupSheet(){
+  const step = (n, html) => `<div class="o"><div class="ic tint-gold">${n}</div><div>${html}</div></div>`;
+  openSheet(`<h2>Bank texts on iPhone</h2>
+    <p class="calc-note" style="margin:-8px 0 16px">One-time setup in Apple’s <b>Shortcuts</b> app (about 3 minutes). After that, every bank text is saved automatically and you just tap <b>Import bank texts</b> in Meridian.</p>
+    <div class="obs">
+      ${step(1, `Open <b>Shortcuts</b> › <b>Automation</b> tab › <b>+</b> › <b>Message</b>.`)}
+      ${step(2, `Set <b>Message Contains</b> to <b>جم</b>. Leave Sender empty. Choose <b>Run Immediately</b>, then <b>Next</b> › <b>New Blank Automation</b>.`)}
+      ${step(3, `Add the action <b>Text</b>. In it type <b>##MERIDIAN##</b>, then tap the variable bar and insert <b>Current Date</b> (tap it and set Date Format to <b>ISO 8601</b>). Press return for a new line and insert <b>Shortcut Input</b> (tap it and choose <b>Content</b>).`)}
+      ${step(4, `Add the action <b>Append to Text File</b>. Set the file path to <b>meridian-bank-texts.txt</b> in the Shortcuts folder and turn on <b>Make New Line</b>. Tap <b>Done</b>.`)}
+      ${step(5, `Repeat steps 1–4 for messages containing <b>جنيه</b> and <b>EGP</b>, so every bank and wallet format is caught.`)}
+      ${step(6, `In Meridian tap <b>Import bank texts</b> › <b>Browse</b> › <b>iCloud Drive</b> › <b>Shortcuts</b> › <b>meridian-bank-texts.txt</b>.`)}
+    </div>
+    <p class="calc-note">Importing the same file again is safe — texts already read are skipped. Only texts that arrive after the setup are saved; older ones can be entered by hand.</p>
+    <div class="btnrow"><button class="btn" id="iosImportNow">Import bank texts now</button></div>`);
+}
+$("#importTexts").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    e.target.value = "";
+    const list = parseTextsFile(rd.result);
+    if (!list.length) return toast("That file has no bank texts in it yet");
+    S.settings.sms.iosUsed = true;
+    const r = ingestSms(list); save(); render(); smsSummary(r, false);
+  };
+  rd.readAsText(f);
+};
 window.meridianSmsArrived = () => pullSmsInbox(true);
 window.meridianSmsPermission = granted => {
   if (granted) {
@@ -926,7 +992,8 @@ function renderActivity(){
         <div class="d">${prettyDate(p.date)} · ${c ? esc(c.name) : "Pick a category"}${p.dup ? " · maybe already logged" : ""}</div></button>
       <div class="a num ${p.type === "income" ? "pos" : ""}">${p.type === "income" ? "+" : "−"}${fmt(p.amount, p.amount % 1 ? 2 : 0)}</div>
       <div class="acts"><button data-pskip="${p.id}">Skip</button>${c ? `<button class="yes" data-padd="${p.id}">Add as ${esc(c.name)}</button>` : `<button class="yes" data-pend="${p.id}">Choose category</button>`}</div></div>`; }).join("")}</div>` : "";
-  $("#v-activity").innerHTML = `${reviewHtml}
+  const iosBtn = !HAS_SMS && S.settings.sms.iosUsed ? `<button class="banner" id="iosImport"><span style="font-size:18px">⇩</span><div class="grow"><b>Import bank texts</b><small>Pick up texts saved since last time</small></div><span class="chev">›</span></button>` : "";
+  $("#v-activity").innerHTML = `${iosBtn}${reviewHtml}
     <div class="sumrow"><div><div class="label" style="color:var(--mint)">In</div><div class="v num">${egp(M.totInc)}</div></div>
       <div><div class="label" style="color:var(--coral)">Out</div><div class="v num">${egp(M.totExp)}</div></div>
       <div><div class="label" style="color:var(--gold)">Left</div><div class="v num ${M.savings<0?"neg":""}">${egp(M.savings)}</div></div></div>
@@ -1032,7 +1099,7 @@ function renderSettings(){
   const th = S.settings.theme || "system";
   const tbtn = (k, label, a, b) => `<button data-theme-set="${k}" class="${th === k ? "on" : ""}"><span class="sw3"><i style="background:${a}"></i><i style="background:${b}"></i></span>${label}</button>`;
   const catRows = type => cats(type).map(c => `<button class="set-row" data-editcat="${type}:${c.id}"><i class="dot" style="background:${c.color};width:12px;height:12px"></i>
-      <div class="grow">${esc(c.name)}${type === "expense" ? `<small>${c.budget > 0 ? "Budget " + egp(c.budget) + " / month" : "No budget"}</small>` : ""}</div><span class="chev">›</span></button>`).join("");
+      <div class="grow">${esc(c.name)}${c.auto ? `<span class="tag">AUTO</span>` : ""}${type === "expense" ? `<small>${c.budget > 0 ? "Budget " + egp(c.budget) + " / month" : "No budget"}</small>` : ""}</div><span class="chev">›</span></button>`).join("");
   $("#v-settings").innerHTML = `
     <div class="label section-label" style="margin-top:4px">Appearance</div>
     <div class="theme-seg">${tbtn("system","System","#F4F2ED","#0D1117")}${tbtn("dark","Dark","#0D1117","#161B22")}${tbtn("light","Light","#F4F2ED","#FFFFFF")}</div>
@@ -1042,7 +1109,12 @@ function renderSettings(){
       <button class="set-row ${S.settings.sms.enabled ? "" : "off"}" id="smsAuto"><div class="grow">Add straight away when sure<small>Off = everything waits in “To review”</small></div><span class="switch ${S.settings.sms.autoAdd ? "on" : ""}"></span></button>
       <button class="set-row ${S.settings.sms.enabled ? "" : "off"}" id="smsScan"><div class="grow">Scan the last 30 days<small>Picks up bank texts you already have</small></div><span class="chev">›</span></button>
       ${Object.keys(S.rules).length ? `<button class="set-row" id="smsRules"><div class="grow">Forget learned categories<small>${Object.keys(S.rules).length} shop${Object.keys(S.rules).length === 1 ? "" : "s"} remembered</small></div><span class="chev">›</span></button>` : ""}
-    </div>` : ""}
+    </div>` : `<div class="label section-label">Bank texts (iPhone)</div>
+    <div class="set-list">
+      <button class="set-row" id="iosImport"><div class="grow">Import bank texts<small>From the file your Shortcuts automation fills</small></div><span class="chev">›</span></button>
+      <button class="set-row" id="iosSetup"><div class="grow">How to set it up<small>One-time, about 3 minutes</small></div><span class="chev">›</span></button>
+      <button class="set-row" id="smsAuto"><div class="grow">Add straight away when sure<small>Off = everything waits in “To review”</small></div><span class="switch ${S.settings.sms.autoAdd ? "on" : ""}"></span></button>
+    </div>`}
     <div class="label section-label">Income categories</div>
     <div class="set-list">${catRows("income")}<button class="set-row add" data-addcat="income">＋ Add income category</button></div>
     <div class="label section-label">Expense categories</div>
@@ -1172,7 +1244,7 @@ function catSheet(type, id){
       const raw = $("#cBudget").value.trim();
       if (raw) { budget = parseNum(raw); if (!(budget > 0)) return $("#cErr").textContent = "Budget must be a positive number, or leave it empty."; }
     }
-    if (c) { c.name = name; c.color = color; if (type === "expense") c.budget = budget; }
+    if (c) { c.name = name; c.color = color; if (type === "expense") c.budget = budget; delete c.auto; }
     else list.push({id: uid(), name, color, ...(type === "expense" ? {budget} : {})});
     save(); closeSheet(); render(); toast(c ? "Category updated" : `“${name}” added`);
   };
@@ -1388,7 +1460,10 @@ document.addEventListener("click", async e => {
     else if (Android.hasSmsPermission()) window.meridianSmsPermission(true);
     else if (await confirmBox("Read your bank texts?", "Android will ask to let Meridian read SMS. Only messages with an EGP amount are used, and they never leave this phone — the app has no internet access.", "Continue")) Android.requestSmsPermission();
   }
-  if (id === "smsAuto" && S.settings.sms.enabled) { S.settings.sms.autoAdd = !S.settings.sms.autoAdd; save(); render(); }
+  if (id === "iosImport" || id === "iosImportNow") { if (id === "iosImportNow") closeSheet(); $("#importTexts").click(); }
+  if (id === "iosSetup") iosSetupSheet();
+  if (id === "smsAuto" && !HAS_SMS) { S.settings.sms.autoAdd = !S.settings.sms.autoAdd; save(); render(); }
+  if (id === "smsAuto" && HAS_SMS && S.settings.sms.enabled) { S.settings.sms.autoAdd = !S.settings.sms.autoAdd; save(); render(); }
   if (id === "smsScan" && S.settings.sms.enabled) scanRecentSms(30);
   if (id === "smsRules" && await confirmBox("Forget learned categories?", "Meridian will go back to guessing categories for shops you’ve corrected before.", "Forget")) { S.rules = {}; save(); render(); }
   if (id === "openCalc") calcSheet();
