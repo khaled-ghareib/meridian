@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Every GitHub build gets a higher version number, so new APKs install as updates
+// on top of the old one and your data is kept.
+def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
+android {
+    namespace 'com.meridian.finance'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.meridian.finance"
+        minSdk 24
+        targetSdk 35
+        versionCode buildNumber
+        versionName "1.0.${buildNumber}"
+    }
+
+    // A fixed signing key: Android only installs an update if it is signed with
+    // the same key as the app already on the phone. The key and its password live in
+    // the repository's private Actions secrets, never in these public files.
+    def ksPass = System.getenv("MERIDIAN_KEYSTORE_PASSWORD")
+    def keyFile = file("meridian.keystore")
+    def hasKey = ksPass && keyFile.exists()
+
+    signingConfigs {
+        if (hasKey) {
+            release {
+                storeFile keyFile
+                storePassword ksPass
+                keyAlias "meridian"
+                keyPassword ksPass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig hasKey ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'androidx.core:core:1.13.1'
+}
