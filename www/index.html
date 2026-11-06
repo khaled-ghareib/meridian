@@ -17,6 +17,7 @@
 @font-face{font-family:Inter;font-weight:500;src:url(fonts/inter-latin-500-normal.woff2) format("woff2")}
 @font-face{font-family:Inter;font-weight:600;src:url(fonts/inter-latin-600-normal.woff2) format("woff2")}
 @font-face{font-family:Inter;font-weight:700;src:url(fonts/inter-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"DM Serif Display";font-weight:400;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format("woff2")}
 :root{
   --bg:#0D1117;--card:#161B22;--raised:#1C2330;--line:#2A3140;--text:#E6EDF3;--muted:#8B949E;--faint:#5A6372;
   --mint:#3DDC97;--coral:#FF7A6B;--gold:#E8C468;--amber:#F0A35E;
@@ -115,6 +116,75 @@
 [data-style="pop"] .tag{border:1.5px solid var(--ink);background:var(--gold);color:#111}
 [data-style="pop"] .grab{background:var(--ink)}
 [data-style="pop"] [style*="color:var(--gold)"]{color:var(--gold-text)!important}
+
+/* ===== Dune style: sunset sky palette, linen surfaces, serif figures ===== */
+:root[data-style="dune"]{
+  --bg:#EEECE1;--card:#F7F7F0;--raised:#EAEADC;--line:#DDD8C9;--text:#2B1714;--muted:#7A6A62;--faint:#A99D93;
+  --mint:#5E8A5A;--coral:#B5382B;--gold:#9C483C;--amber:#B7793B;--on-accent:#F7F7F0;
+  --navbg:rgba(247,247,240,.96);--grid:#E3DFD2;--zero:#C0AE98;--glow:transparent;--edge:rgba(109,51,44,.06);
+  --shadow:0 8px 22px rgba(156,72,60,.35);--toast-btn:#ADC6C9;--gold-text:#9C483C;
+  --hero:linear-gradient(165deg,#8E3A30 0%,#9C483C 30%,#B9776A 62%,#ADC6C9 100%);
+  --soft:0 1px 2px rgba(43,23,20,.05),0 6px 18px rgba(43,23,20,.06);
+  --r:22px;color-scheme:light;
+}
+:root[data-style="dune"][data-theme="dark"]{
+  --bg:#1A1312;--card:#241A18;--raised:#2F2321;--line:#3A2C29;--text:#F2EEE4;--muted:#B5A69A;--faint:#7C6D65;
+  --mint:#93B38D;--coral:#E2796A;--gold:#C8705F;--amber:#D69A5C;--on-accent:#1A1312;
+  --navbg:rgba(36,26,24,.96);--grid:#33262A;--zero:#5A4743;--edge:rgba(255,255,255,.04);
+  --shadow:0 8px 22px rgba(0,0,0,.45);--toast-btn:#9C483C;--gold-text:#E0907D;
+  --hero:linear-gradient(165deg,#5A2822 0%,#6D332C 34%,#8A4A3E 64%,#56767A 100%);
+  --soft:0 1px 2px rgba(0,0,0,.25),0 8px 20px rgba(0,0,0,.25);
+  color-scheme:dark;
+}
+[data-style="dune"] .card,[data-style="dune"] .kpi,[data-style="dune"] .txlist,[data-style="dune"] .set-list,
+[data-style="dune"] .sumrow>div,[data-style="dune"] .theme-seg,[data-style="dune"] .review,[data-style="dune"] .banner{box-shadow:var(--soft);border-color:transparent}
+[data-style="dune"] .page-title{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:34px;letter-spacing:0}
+[data-style="dune"] .brand b{color:var(--gold)}
+[data-style="dune"] .hero .big,[data-style="dune"] .kpi .v,[data-style="dune"] .goal-amt,[data-style="dune"] .tile .big,
+[data-style="dune"] .donut .center b,[data-style="dune"] .ring .center b,[data-style="dune"] .sumrow .v,[data-style="dune"] .hero .flow .v,
+[data-style="dune"] .card h3,[data-style="dune"] .goal-name,[data-style="dune"] .sheet h2,[data-style="dune"] .dialog h3{
+  font-family:"DM Serif Display",Georgia,serif;font-weight:400;letter-spacing:0}
+[data-style="dune"] .card h3{font-size:18px}
+[data-style="dune"] .hero .big{font-size:42px}
+[data-style="dune"] .kpi .v{font-size:23px}
+[data-style="dune"] .goal-amt{font-size:32px}
+[data-style="dune"] .tile .big{font-size:24px}
+[data-style="dune"] .hero{background:var(--hero);color:#F7F7F0;padding:20px}
+[data-style="dune"] .hero .label,[data-style="dune"] .hero .delta{color:rgba(247,247,240,.82)}
+[data-style="dune"] .hero .neg{color:#FFE2D8}
+[data-style="dune"] .hero .flow>div{background:rgba(247,247,240,.92);color:#2B1714;backdrop-filter:blur(6px)}
+[data-style="dune"][data-theme="dark"] .hero .flow>div{background:rgba(26,19,18,.55);color:#F2EEE4}
+[data-style="dune"] .hero .flow .label[style*="--mint"]{color:#4F7A4B!important}
+[data-style="dune"] .hero .flow .label[style*="--coral"]{color:#9C483C!important}
+[data-style="dune"][data-theme="dark"] .hero .flow .label[style*="--mint"]{color:#A9C8A3!important}
+[data-style="dune"][data-theme="dark"] .hero .flow .label[style*="--coral"]{color:#F0A08F!important}
+[data-style="dune"] .hero .flow .delta{color:#7A6A62}
+[data-style="dune"] .hero .flow .delta.up-good{color:#4F7A4B}[data-style="dune"] .hero .flow .delta.up-bad{color:#9C483C}
+[data-style="dune"][data-theme="dark"] .hero .flow .delta{color:#C9BBAF}
+[data-style="dune"] .kpi::before{height:4px;background:linear-gradient(90deg,var(--gold),#ADC6C9)}
+[data-style="dune"] .monthbar{background:var(--card);border-color:transparent;box-shadow:var(--soft);border-radius:18px}
+[data-style="dune"] .chip{border-color:var(--line);border-radius:999px}
+[data-style="dune"] .chip.on{background:var(--gold);color:var(--on-accent);border-color:var(--gold)}
+[data-style="dune"] .btn{border-radius:999px}
+[data-style="dune"] nav.tabs .fab{border-radius:50%;background:linear-gradient(160deg,#B5574A,#9C483C 55%,#6D332C)}
+[data-style="dune"][data-theme="dark"] nav.tabs .fab{background:linear-gradient(160deg,#D88473,#C8705F 55%,#9C483C)}
+[data-style="dune"] nav.tabs .fab svg{stroke:#F7F7F0}
+[data-style="dune"] nav.tabs button.on svg{stroke:var(--gold)}
+[data-style="dune"] .review-head{background:linear-gradient(120deg,color-mix(in srgb,var(--gold) 16%,transparent),color-mix(in srgb,#ADC6C9 30%,transparent))}
+[data-style="dune"] .tint-gold{background:color-mix(in srgb,var(--gold) 10%,var(--raised))}
+[data-style="dune"] .tint-mint{background:color-mix(in srgb,#ADC6C9 38%,var(--raised))}
+[data-style="dune"] .tint-coral{background:color-mix(in srgb,var(--coral) 12%,var(--raised))}
+[data-style="dune"] .cta .ic{border-radius:50%}
+[data-style="dune"] .tx .av{border-radius:50%;background:color-mix(in srgb,var(--c) 26%,var(--card));color:color-mix(in srgb,var(--c) 55%,var(--text))}
+[data-style="dune"] .calc-f.result{background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,var(--raised)),color-mix(in srgb,#ADC6C9 30%,var(--raised)));border-color:transparent}
+[data-style="dune"] .calc-f.result label{color:var(--gold-text)}
+[data-style="dune"] .seg button.on.inc{background:var(--mint);color:#F7F7F0}
+[data-style="dune"] .seg button.on.exp{background:var(--gold);color:#F7F7F0}
+[data-style="dune"] .toast{background:#2B1714;color:#F7F7F0}
+[data-style="dune"][data-theme="dark"] .toast{background:#F2EEE4;color:#1A1312}
+[data-style="dune"] .theme-seg button.on{box-shadow:inset 0 0 0 1.5px var(--gold)}
+[data-style="dune"] [style*="color:var(--gold)"]{color:var(--gold-text)!important}
+[data-style="dune"] .grab{background:var(--zero)}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;
@@ -290,7 +360,7 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .theme-seg button.on{background:var(--raised);color:var(--text);box-shadow:inset 0 0 0 1.5px var(--gold)}
 .theme-seg .sw3{width:34px;height:22px;border-radius:7px;border:1px solid var(--line);overflow:hidden;display:flex}
 .theme-seg .sw3 i{flex:1}
-.theme-seg.two{grid-template-columns:1fr 1fr}
+.theme-seg.two{grid-template-columns:1fr 1fr 1fr}
 .stylecard{width:100%;height:46px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px}
 .stylecard i{width:16px;height:16px;border-radius:4px;display:block}
 
@@ -448,6 +518,16 @@ const KEY = "meridian.v1";
 const INC_COLORS = ["#3DDC97","#6CB6FF","#E8C468","#B392F0","#4FD1C5","#F0A35E","#F78FB3","#8D7CFF","#D4A373","#9AA5B1","#C9D1D9","#7EE787"];
 const EXP_COLORS = ["#FF7A6B","#F0A35E","#E8C468","#B392F0","#6CB6FF","#F78FB3","#4FD1C5","#3DDC97","#D4A373","#8D7CFF","#9AA5B1","#C9D1D9"];
 const OTHER = "#5A6372";
+const DUNE_LIGHT = ["#9C483C","#7FA3A7","#6D332C","#A7AF9F","#C0AE98","#C7826A","#5E7A7D","#8C6A5A","#C2A66B","#7D8B72","#B98B82","#4A3A36"];
+const DUNE_DARK  = ["#C8705F","#ADC6C9","#B3786B","#A7AF9F","#C0AE98","#E0A285","#8FB0B3","#B08D7C","#D9C48E","#9DAA90","#D4A9A0","#8E7A74"];
+function cc(hex){
+  if (document.documentElement.dataset.style !== "dune") return hex;
+  const dark = document.documentElement.dataset.theme === "dark";
+  const pal = dark ? DUNE_DARK : DUNE_LIGHT;
+  if (hex === OTHER) return dark ? "#7C6D65" : "#A99D93";
+  let i = EXP_COLORS.indexOf(hex); if (i < 0) i = INC_COLORS.indexOf(hex);
+  return i < 0 ? hex : pal[i % pal.length];
+}
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MSHORT = MONTHS.map(m => m.slice(0,3));
 
@@ -511,10 +591,12 @@ function readSystemTheme(){
 function applyTheme(){
   const pref = S.settings.theme || "system";
   const dark = pref === "dark" || (pref === "system" && systemDark);
-  const style = S.settings.style === "pop" ? "pop" : "classic";
+  const style = ["pop", "dune"].includes(S.settings.style) ? S.settings.style : "classic";
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.style = style;
-  const bars = style === "pop" ? (dark ? ["#131313", "#1E1E1E"] : ["#FBF7EF", "#FFFFFF"]) : (dark ? ["#0D1117", "#161B22"] : ["#F4F2ED", "#FFFFFF"]);
+  const bars = style === "pop" ? (dark ? ["#131313", "#1E1E1E"] : ["#FBF7EF", "#FFFFFF"])
+    : style === "dune" ? (dark ? ["#1A1312", "#241A18"] : ["#EEECE1", "#F7F7F0"])
+    : (dark ? ["#0D1117", "#161B22"] : ["#F4F2ED", "#FFFFFF"]);
   document.getElementById("metaTheme").setAttribute("content", bars[0]);
   if (window.Android) {
     try { if (Android.setBars) Android.setBars(bars[0], bars[1], !dark); else if (Android.setTheme) Android.setTheme(!dark); } catch(e){}
@@ -527,7 +609,7 @@ if (window.matchMedia) {
   const onChange = () => { if (!window.Android) { systemDark = mq.matches; applyTheme(); } };
   mq.addEventListener ? mq.addEventListener("change", onChange) : mq.addListener(onChange);
 }
-window.meridianSystemTheme = dark => { systemDark = !!dark; applyTheme(); };
+window.meridianSystemTheme = dark => { systemDark = !!dark; applyTheme(); if (typeof render === "function") render(); };
 
 /* ============================================================ helpers */
 const $ = s => document.querySelector(s);
@@ -949,7 +1031,7 @@ function donut(rows, total, centerLabel){
   let off = 0, arcs = "";
   for (const r of rows) {
     const len = r.amount / total * C;
-    arcs += `<circle cx="66" cy="66" r="${R}" fill="none" stroke="${r.color}" stroke-width="16"
+    arcs += `<circle cx="66" cy="66" r="${R}" fill="none" stroke="${cc(r.color)}" stroke-width="16"
       stroke-dasharray="${Math.max(len-gap,0.01)} ${C}" stroke-dashoffset="${-off}"/>`;
     off += len;
   }
@@ -963,7 +1045,7 @@ function breakdownCard(title, M, type){
   let body;
   if (!total) body = `<div class="empty"><b>Nothing yet</b>No ${type === "income" ? "income" : "expenses"} logged for ${keyName(M.k)}.</div>`;
   else body = `<div class="donut-wrap">${donut(rows, total, type === "income" ? "IN" : "OUT")}
-    <div class="legend">${rows.map(r => `<div class="row"><i class="dot" style="background:${r.color}"></i>
+    <div class="legend">${rows.map(r => `<div class="row"><i class="dot" style="background:${cc(r.color)}"></i>
       <div class="nm">${esc(r.name)} <span class="pc">${pct(r.amount/total)}</span></div><div class="am num">${fmt(r.amount)}</div></div>`).join("")}</div></div>`;
   return `<div class="card"><div class="card-head"><div><h3>${title}</h3>
     <p class="sub">${total ? `${egp(total)} from ${count} ${count === 1 ? "entry" : "entries"}` : keyName(M.k)}</p></div></div>${body}</div>`;
@@ -1033,7 +1115,7 @@ function renderHome(){
         <div class="v num ${M.totInc ? (M.rate < 0 ? "neg" : M.rate >= S.settings.target ? "pos" : "") : ""}">${M.totInc ? pct(M.rate, 1) : "—"}</div>
         <div class="s">Target ${pct(S.settings.target)}${M.totInc ? (M.rate >= S.settings.target ? " · on track ✓" : " · below") : ""}</div></div>
       <div class="kpi" style="--accent:var(--coral);grid-column:1/3"><div class="label">Top spending</div>
-        <div class="v">${hasTop ? `<i class="dot" style="background:${top.color};margin-right:8px;vertical-align:2px"></i>${esc(top.name)}` : "—"}</div>
+        <div class="v">${hasTop ? `<i class="dot" style="background:${cc(top.color)};margin-right:8px;vertical-align:2px"></i>${esc(top.name)}` : "—"}</div>
         <div class="s">${hasTop ? `${egp(top.amount)} · ${pct(top.amount/M.totExp)} of spending${M.totInc ? ` · ${pct(top.amount/M.totInc)} of income` : ""}` : "No spending this month"}</div></div>
     </div>
 
@@ -1051,7 +1133,7 @@ function renderHome(){
     <div class="card"><div class="card-head"><div><h3>Spending by category</h3><p class="sub">Ranked, largest first</p></div></div>
       ${ranked.length ? `<div class="rank">${ranked.map(c => `<div class="r"><span>${esc(c.name)}</span>
         <span class="num"><b>${fmt(c.amount)}</b> <span class="meta">· ${pct(c.amount/M.totExp)}</span></span>
-        <div class="track"><div class="fillbar" style="width:${c.amount/maxR*100}%;background:${c.color}"></div></div></div>`).join("")}</div>`
+        <div class="track"><div class="fillbar" style="width:${c.amount/maxR*100}%;background:${cc(c.color)}"></div></div></div>`).join("")}</div>`
       : `<div class="empty">No spending logged for ${keyName(month)}.</div>`}</div>
 
     <div class="card"><div class="card-head"><div><h3>Monthly overview</h3><p class="sub">Six months to ${keyName(month)}</p></div></div>${overview(month)}</div>
@@ -1063,7 +1145,7 @@ function renderHome(){
     <div class="card"><div class="health">${health.length ? health.map(c => {
       const st = status(c, M);
       const bw = st.used !== null ? Math.min(st.used, 1) * 100 : (M.totInc ? Math.min(c.amount/M.totInc/S.settings.threshold, 1) * 100 : 0);
-      return `<div class="h"><i class="dot" style="background:${c.color}"></i><div class="nm">${esc(c.name)}</div><div class="am num">${egp(c.amount)}</div>
+      return `<div class="h"><i class="dot" style="background:${cc(c.color)}"></i><div class="nm">${esc(c.name)}</div><div class="am num">${egp(c.amount)}</div>
         <div class="info"><span>${M.totInc ? pct(c.amount/M.totInc) + " of income" : "—"}${c.budget > 0 ? ` · budget ${fmt(c.budget)}` : ""}</span><span class="pill ${st.key}">${st.text}</span></div>
         <div class="minibar"><div style="width:${bw}%;background:${st.key === "over" ? "var(--coral)" : st.key === "high" ? "var(--amber)" : st.key === "near" ? "var(--gold)" : c.color}"></div></div></div>`;
     }).join("") : `<div class="empty">Add expenses or set budgets in Settings to see category health.</div>`}</div>
@@ -1095,7 +1177,7 @@ function renderActivity(){
       const day = groups[d], net = day.reduce((s,t) => s + (t.type === "income" ? t.amount : -t.amount), 0);
       return `<div class="daygroup"><div class="dayhead"><span>${dayLabel(d)}</span><span class="num">${net >= 0 ? "+" : "−"}${fmt(Math.abs(net))}</span></div>
         <div class="txlist">${day.map(t => {
-          const c = catOf(t.type, t.catId), col = c ? c.color : OTHER, nm = c ? c.name : "Uncategorised";
+          const c = catOf(t.type, t.catId), col = cc(c ? c.color : OTHER), nm = c ? c.name : "Uncategorised";
           return `<button class="tx" data-tx="${t.id}"><div class="av" style="--c:${col}">${esc(nm.charAt(0).toUpperCase())}</div>
             <div style="min-width:0"><div class="nm">${esc(nm)}${t.source === "sms" ? `<span class="tag">SMS</span>` : ""}</div><div class="nt">${t.note ? esc(t.note) : (t.type === "income" ? "Income" : "Expense")}</div></div>
             <div class="am num ${t.type === "income" ? "pos" : ""}">${t.type === "income" ? "+" : "−"}${fmt(t.amount, t.amount % 1 ? 2 : 0)}</div></button>`;
@@ -1191,13 +1273,14 @@ function renderPlan(){
 function renderSettings(){
   const th = S.settings.theme || "system";
   const tbtn = (k, label, a, b) => `<button data-theme-set="${k}" class="${th === k ? "on" : ""}"><span class="sw3"><i style="background:${a}"></i><i style="background:${b}"></i></span>${label}</button>`;
-  const catRows = type => cats(type).map(c => `<button class="set-row" data-editcat="${type}:${c.id}"><i class="dot" style="background:${c.color};width:12px;height:12px"></i>
+  const catRows = type => cats(type).map(c => `<button class="set-row" data-editcat="${type}:${c.id}"><i class="dot" style="background:${cc(c.color)};width:12px;height:12px"></i>
       <div class="grow">${esc(c.name)}${c.auto ? `<span class="tag">AUTO</span>` : ""}${type === "expense" ? `<small>${c.budget > 0 ? "Budget " + egp(c.budget) + " / month" : "No budget"}</small>` : ""}</div><span class="chev">›</span></button>`).join("");
   $("#v-settings").innerHTML = `
     <div class="label section-label" style="margin-top:4px">Appearance</div>
     <div class="theme-seg two">
-      <button data-style-set="classic" class="${S.settings.style !== "pop" ? "on" : ""}"><span class="stylecard" style="background:#0D1117;border:1px solid #2A3140"><i style="background:#E8C468;border-radius:50%"></i><i style="background:#3DDC97;border-radius:50%"></i><i style="background:#FF7A6B;border-radius:50%"></i></span>Classic</button>
+      <button data-style-set="classic" class="${!["pop","dune"].includes(S.settings.style) ? "on" : ""}"><span class="stylecard" style="background:#0D1117;border:1px solid #2A3140"><i style="background:#E8C468;border-radius:50%"></i><i style="background:#3DDC97;border-radius:50%"></i><i style="background:#FF7A6B;border-radius:50%"></i></span>Classic</button>
       <button data-style-set="pop" class="${S.settings.style === "pop" ? "on" : ""}"><span class="stylecard" style="background:#FBF7EF;border:2px solid #111;box-shadow:2px 2px 0 #111"><i style="background:#FFC83D;border:2px solid #111"></i><i style="background:#22B455;border:2px solid #111"></i><i style="background:#FF4D6A;border:2px solid #111"></i></span>Pop</button>
+      <button data-style-set="dune" class="${S.settings.style === "dune" ? "on" : ""}"><span class="stylecard" style="background:linear-gradient(165deg,#9C483C,#B9776A 55%,#ADC6C9)"><i style="background:#F7F7F0;border-radius:50%"></i><i style="background:#6D332C;border-radius:50%"></i><i style="background:#C0AE98;border-radius:50%"></i></span>Dune</button>
     </div>
     <div class="theme-seg">${tbtn("system","System","#F4F2ED","#0D1117")}${tbtn("dark","Dark","#0D1117","#161B22")}${tbtn("light","Light","#F4F2ED","#FFFFFF")}</div>
     ${HAS_SMS ? `<div class="label section-label">Auto-logging</div>
@@ -1260,7 +1343,7 @@ function txSheet(existing, pendingItem){
   const draw = () => {
     const list = cats(type);
     if (catId && !list.find(c => c.id === catId) && !(existing && existing.catId === catId && existing.type === type)) catId = null;
-    $("#catgrid").innerHTML = list.length ? list.map(c => `<button class="cat ${c.id === catId ? "on" : ""}" data-cat="${c.id}"><i class="dot" style="background:${c.color}"></i>${esc(c.name)}</button>`).join("")
+    $("#catgrid").innerHTML = list.length ? list.map(c => `<button class="cat ${c.id === catId ? "on" : ""}" data-cat="${c.id}"><i class="dot" style="background:${cc(c.color)}"></i>${esc(c.name)}</button>`).join("")
       : `<div class="empty" style="padding:8px 0">No ${type} categories yet — add one in Settings.</div>`;
     document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b.dataset.type === type));
     $("#saveTx").style.background = type === "income" ? "var(--mint)" : "var(--coral)";
@@ -1325,7 +1408,7 @@ function catSheet(type, id){
     <div class="field"><label class="label">Name</label><input class="input" id="cName" maxlength="28" value="${c ? esc(c.name) : ""}" placeholder="e.g. Gym"></div>
     ${type === "expense" ? `<div class="field"><label class="label">Monthly budget (EGP) <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
       <input class="input num" id="cBudget" inputmode="decimal" placeholder="No budget" value="${c && c.budget > 0 ? c.budget : ""}"></div>` : ""}
-    <div class="field"><label class="label">Colour</label><div class="swatches" id="sw">${palette.map(p => `<button class="sw ${p === color ? "on" : ""}" data-c="${p}" style="background:${p}"></button>`).join("")}</div></div>
+    <div class="field"><label class="label">Colour</label><div class="swatches" id="sw">${palette.map(p => `<button class="sw ${p === color ? "on" : ""}" data-c="${p}" style="background:${cc(p)}"></button>`).join("")}</div></div>
     <div class="err" id="cErr"></div>
     <button class="btn" id="cSave">${c ? "Save" : "Add category"}</button>
     ${c ? `<div class="btnrow"><button class="btn danger" id="cDel">Delete category</button></div>
@@ -1547,8 +1630,8 @@ document.addEventListener("click", async e => {
     learnRule(it.type, it.merchant, it.catId);
     S.pending = S.pending.filter(x => x.id !== it.id); save(); render(); toast(`${it.type === "income" ? "Income" : "Expense"} of ${amt(it.amount)} added`); return;
   }
-  const sty = e.target.closest("[data-style-set]"); if (sty) { S.settings.style = sty.dataset.styleSet; save(); applyTheme(); renderSettings(); return; }
-  const th = e.target.closest("[data-theme-set]"); if (th) { S.settings.theme = th.dataset.themeSet; save(); applyTheme(); renderSettings(); return; }
+  const sty = e.target.closest("[data-style-set]"); if (sty) { S.settings.style = sty.dataset.styleSet; save(); applyTheme(); render(); return; }
+  const th = e.target.closest("[data-theme-set]"); if (th) { S.settings.theme = th.dataset.themeSet; save(); applyTheme(); render(); return; }
   const id = e.target.closest("button")?.id;
   if (id === "newGoal" || id === "editGoal") goalSheet();
   if (id === "goReview") setTab("activity");
