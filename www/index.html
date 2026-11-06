@@ -658,6 +658,23 @@ body.sheet-on #fab .fab svg{transform:rotate(45deg)}
   body.sheet-on #app{transform:none}
 }
 
+/* ---- custom colour slider ---- */
+.huebox{margin-top:14px}
+.huehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;color:var(--muted)}
+.huehead .prev{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text)}
+.huehead .prev i{width:22px;height:22px;border-radius:50%;display:block;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25)}
+.hue{-webkit-appearance:none;appearance:none;width:100%;height:30px;border-radius:999px;outline:0;margin:0;cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.hue::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;border-radius:50%;background:var(--thumb,#fff);
+  border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:transform .15s}
+.hue:active::-webkit-slider-thumb{transform:scale(1.15)}
+.hue::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--thumb,#fff);border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.sw.custom{background:conic-gradient(from 0deg,hsl(0 70% 60%),hsl(60 70% 60%),hsl(120 70% 60%),hsl(180 70% 60%),hsl(240 70% 60%),hsl(300 70% 60%),hsl(360 70% 60%));position:relative}
+.sw.custom.picked{background:var(--pick)}
+[data-style="pop"] .hue{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--hard)}
+[data-style="pop"] .hue::-webkit-slider-thumb{border:3px solid var(--ink);box-shadow:none}
+[data-style="mono"] .hue::-webkit-slider-thumb{border-color:var(--card);box-shadow:0 0 0 1.5px var(--text)}
+
 /* calculator */
 .calc-f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;background:var(--raised);border:1px solid var(--line);
   border-radius:14px;padding:10px 14px;margin-bottom:10px}
@@ -727,7 +744,21 @@ const DUNE_LIGHT = ["#9C483C","#7FA3A7","#6D332C","#A7AF9F","#C0AE98","#C7826A",
 const DUNE_DARK  = ["#C8705F","#ADC6C9","#B3786B","#A7AF9F","#C0AE98","#E0A285","#8FB0B3","#B08D7C","#D9C48E","#9DAA90","#D4A9A0","#8E7A74"];
 const MONO_LIGHT = ["#111111","#D9502F","#8A8A84","#C4C4BE","#3D3D3B","#EE9A85","#5E5E5A","#A6A6A0","#262626","#D3D3CD","#6E6E69","#B4B4AE"];
 const MONO_DARK  = ["#F2F2EE","#F06A4C","#8A8A84","#76766F","#C4C4BE","#F5A58F","#A6A6A0","#9A9A94","#DCDCD6","#6E6E6A","#B4B4AE","#82827C"];
+/* Shade used for custom colours in each style and mode: [saturation %, lightness %] */
+const HUE_SHADE = {
+  classic: {light: [62, 48], dark: [70, 64]},
+  pop:     {light: [88, 56], dark: [90, 62]},
+  dune:    {light: [34, 44], dark: [38, 64]},
+  mono:    {light: [16, 40], dark: [14, 70]}
+};
+function hueShade(){
+  const st = document.documentElement.dataset.style || "classic";
+  const dark = document.documentElement.dataset.theme === "dark";
+  return (HUE_SHADE[st] || HUE_SHADE.classic)[dark ? "dark" : "light"];
+}
+const hueColor = h => { const [sat, lit] = hueShade(); return `hsl(${Math.round(h)} ${sat}% ${lit}%)`; };
 function cc(hex){
+  if (typeof hex === "string" && hex.startsWith("hsl:")) return hueColor(parseFloat(hex.slice(4)) || 0);
   const st = document.documentElement.dataset.style;
   if (st !== "dune" && st !== "mono") return hex;
   const dark = document.documentElement.dataset.theme === "dark";
@@ -1387,7 +1418,7 @@ function renderHome(){
       const bw = st.used !== null ? Math.min(st.used, 1) * 100 : (M.totInc ? Math.min(c.amount/M.totInc/S.settings.threshold, 1) * 100 : 0);
       return `<div class="h"><i class="dot" style="background:${cc(c.color)}"></i><div class="nm">${esc(c.name)}</div><div class="am num">${egp(c.amount)}</div>
         <div class="info"><span>${M.totInc ? pct(c.amount/M.totInc) + " of income" : "—"}${c.budget > 0 ? ` · budget ${fmt(c.budget)}` : ""}</span><span class="pill ${st.key}">${st.text}</span></div>
-        <div class="minibar"><div style="width:${bw}%;background:${st.key === "over" ? "var(--coral)" : st.key === "high" ? "var(--amber)" : st.key === "near" ? "var(--gold)" : c.color}"></div></div></div>`;
+        <div class="minibar"><div style="width:${bw}%;background:${st.key === "over" ? "var(--coral)" : st.key === "high" ? "var(--amber)" : st.key === "near" ? "var(--gold)" : cc(c.color)}"></div></div></div>`;
     }).join("") : `<div class="empty">Add expenses or set budgets in Settings to see category health.</div>`}</div>
     <p class="foot">Bars show budget used, or share of your ${pct(S.settings.threshold)} income alert limit when no budget is set.</p></div>`;
 }
@@ -1781,13 +1812,41 @@ function catSheet(type, id){
     <div class="field"><label class="label">Name</label><input class="input" id="cName" maxlength="28" value="${c ? esc(c.name) : ""}" placeholder="e.g. Gym"></div>
     ${type === "expense" ? `<div class="field"><label class="label">Monthly budget (EGP) <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
       <input class="input num" id="cBudget" inputmode="decimal" placeholder="No budget" value="${c && c.budget > 0 ? c.budget : ""}"></div>` : ""}
-    <div class="field"><label class="label">Colour</label><div class="swatches" id="sw">${palette.map(p => `<button class="sw ${p === color ? "on" : ""}" data-c="${p}" style="background:${cc(p)}"></button>`).join("")}</div></div>
+    <div class="field"><label class="label">Colour</label><div class="swatches" id="sw">${palette.map(p => `<button class="sw ${p === color ? "on" : ""}" data-c="${p}" style="background:${cc(p)}"></button>`).join("")}<button class="sw custom" id="swCustom" aria-label="Custom colour"></button></div>
+      <div class="huebox"><div class="huehead"><span>Or pick any colour</span><span class="prev"><i id="huePrev"></i><span id="hueName"></span></span></div>
+      <input type="range" class="hue" id="hue" min="0" max="359" step="1" aria-label="Custom colour"></div></div>
     <div class="err" id="cErr"></div>
     <button class="btn" id="cSave">${c ? "Save" : "Add category"}</button>
     ${c ? `<div class="btnrow"><button class="btn danger" id="cDel">Delete category</button></div>
       <p class="foot">${used ? `${used} transaction${used > 1 ? "s use" : " uses"} this category. Renaming updates them too.` : "No transactions use this category yet."}</p>` : ""}`);
   if (!c) setTimeout(() => $("#cName").focus(), 300);
-  $("#sw").onclick = e => { const b = e.target.closest("[data-c]"); if (!b) return; color = b.dataset.c; document.querySelectorAll("#sw .sw").forEach(s => s.classList.toggle("on", s.dataset.c === color)); };
+  const HUE_NAMES = [[15,"Red"],[40,"Orange"],[65,"Yellow"],[90,"Lime"],[150,"Green"],[185,"Teal"],[210,"Sky"],[250,"Blue"],[280,"Indigo"],[315,"Purple"],[345,"Pink"],[360,"Red"]];
+  const hueName = h => HUE_NAMES.find(([lim]) => h < lim)[1];
+  const hueEl = $("#hue");
+  // the bar is painted in the active theme's shade, so every colour on it matches the theme
+  hueEl.style.background = `linear-gradient(90deg,${[0,30,60,90,120,150,180,210,240,270,300,330,359].map(h => hueColor(h)).join(",")})`;
+  const startHue = color.startsWith("hsl:") ? parseFloat(color.slice(4)) : (() => {
+    const m = cc(color).match(/^#?([0-9a-f]{6})$/i); if (!m) return 200;
+    const n = parseInt(m[1], 16), r = (n >> 16) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; if (!d) return 200;
+    let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; return h < 0 ? h + 360 : h; })();
+  hueEl.value = Math.round(startHue);
+  const showHue = () => {
+    const h = +hueEl.value, col = hueColor(h);
+    hueEl.style.setProperty("--thumb", col);
+    $("#huePrev").style.background = col; $("#hueName").textContent = hueName(h);
+    const custom = color.startsWith("hsl:");
+    $("#swCustom").classList.toggle("on", custom); $("#swCustom").classList.toggle("picked", custom);
+    $("#swCustom").style.setProperty("--pick", custom ? cc(color) : "");
+    document.querySelectorAll("#sw .sw[data-c]").forEach(x => x.classList.toggle("on", x.dataset.c === color));
+  };
+  showHue();
+  hueEl.addEventListener("input", () => { color = "hsl:" + hueEl.value; showHue(); });
+  hueEl.addEventListener("change", () => buzz(6));
+  $("#sw").onclick = e => {
+    if (e.target.closest("#swCustom")) { color = "hsl:" + hueEl.value; showHue(); return; }
+    const b = e.target.closest("[data-c]"); if (!b) return; color = b.dataset.c; showHue();
+  };
   $("#cSave").onclick = () => {
     const name = $("#cName").value.trim();
     if (!name) return $("#cErr").textContent = "Give the category a name.";
