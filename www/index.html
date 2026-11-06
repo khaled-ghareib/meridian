@@ -1436,7 +1436,7 @@ function renderActivity(){
     ${pend.map(p => { const c = p.catId ? catOf(p.type, p.catId) : null; return `<div class="rv">
       <button class="open" data-pend="${p.id}"><div class="m">${esc(p.merchant || (p.type === "income" ? "Money received" : "Payment"))}</div>
         <div class="d">${prettyDate(p.date)} · ${c ? esc(c.name) : "Pick a category"}${p.dup ? " · maybe already logged" : ""}</div></button>
-      <div class="a num ${p.type === "income" ? "pos" : ""}">${p.type === "income" ? "+" : "−"}${fmt(p.amount, p.amount % 1 ? 2 : 0)}</div>
+      <div class="a num ${p.type === "income" ? "pos" : "neg"}">${p.type === "income" ? "+" : "−"}${fmt(p.amount, p.amount % 1 ? 2 : 0)}</div>
       <div class="acts"><button data-pskip="${p.id}">Skip</button>${c ? `<button class="yes" data-padd="${p.id}">Add as ${esc(c.name)}</button>` : `<button class="yes" data-pend="${p.id}">Choose category</button>`}</div></div>`; }).join("")}</div>` : "";
   const iosBtn = !HAS_SMS && S.settings.sms.iosUsed ? `<button class="banner" id="iosImport"><span style="font-size:18px">⇩</span><div class="grow"><b>Import bank texts</b><small>Pick up texts saved since last time</small></div><span class="chev">›</span></button>` : "";
   $("#v-activity").innerHTML = `${iosBtn}${reviewHtml}
@@ -1451,7 +1451,7 @@ function renderActivity(){
           const c = catOf(t.type, t.catId), col = cc(c ? c.color : OTHER), nm = c ? c.name : "Uncategorised";
           return `<button class="tx" data-tx="${t.id}"><div class="av" style="--c:${col}">${esc(nm.charAt(0).toUpperCase())}</div>
             <div style="min-width:0"><div class="nm">${esc(nm)}${t.source === "sms" ? `<span class="tag">SMS</span>` : ""}</div><div class="nt">${t.note ? esc(t.note) : (t.type === "income" ? "Income" : "Expense")}</div></div>
-            <div class="am num ${t.type === "income" ? "pos" : ""}">${t.type === "income" ? "+" : "−"}${fmt(t.amount, t.amount % 1 ? 2 : 0)}</div></button>`;
+            <div class="am num ${t.type === "income" ? "pos" : "neg"}">${t.type === "income" ? "+" : "−"}${fmt(t.amount, t.amount % 1 ? 2 : 0)}</div></button>`;
         }).join("")}</div></div>`;
     }).join("") : `<div class="card empty"><b>No ${actFilter === "all" ? "transactions" : actFilter === "income" ? "income" : "expenses"} in ${keyName(month)}</b>Tap the gold + button to add one.</div>`}`;
 }
