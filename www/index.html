@@ -790,8 +790,7 @@ function parseTextsFile(text){
   }
   return out;
 }
-const IOS_SHORTCUT_URL = "https://www.icloud.com/shortcuts/62ee3adc962247ef9b8f978f7ff9079c";
-const SHORTCUT_URL = "https://www.icloud.com/shortcuts/62ee3adc962247ef9b8f978f7ff9079c";
+const SHORTCUT_URL = "https://www.icloud.com/shortcuts/1349f4ca1e47416f85457c41bca3b417";
 function iosSetupSheet(){
   const step = (n, html) => `<div class="o"><div class="ic tint-gold">${n}</div><div>${html}</div></div>`;
   openSheet(`<h2>Bank texts on iPhone</h2>
@@ -799,9 +798,9 @@ function iosSetupSheet(){
     <div class="obs">
       ${step(1, `Tap <b>Add shortcut</b> below, then <b>Add Shortcut</b> in the Shortcuts app.`)}
       ${step(2, `In Shortcuts open the <b>Automation</b> tab › <b>+</b> › <b>Message</b>.`)}
-      ${step(3, `Set <b>Message Contains</b> to <b>جم</b>, leave Sender empty, choose <b>Run Immediately</b>, tap <b>Next</b> and pick <b>Meridian Bank Text</b>.`)}
-      ${step(4, `Repeat steps 2–3 with <b>جنيه</b> and with <b>EGP</b>, so every bank and wallet format is caught.`)}
-      ${step(5, `Later, in Meridian tap <b>Import bank texts</b> › <b>Browse</b> › <b>iCloud Drive</b> › <b>Shortcuts</b> › <b>meridian-bank-texts.txt</b>.`)}
+      ${step(3, `Set <b>Message Contains</b> to <b>جم</b>, leave Sender empty, choose <b>Run Immediately</b>, tap <b>Next</b> and pick <b>Meridian Bank Text</b>. (On newer iOS the trigger is already inside the shortcut — just check <b>Automation</b> is on and <b>Confirm Before Run</b> is off.)`)}
+      ${step(4, `Tap <b>▶</b> once to test it: <b>meridian-bank-texts.txt</b> should appear in <b>Files › On My iPhone › Downloads</b>.`)}
+      ${step(5, `Whenever you open Meridian, tap <b>Import new bank texts</b> and pick that file.`)}
     </div>
     <a class="btn" href="${SHORTCUT_URL}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;margin-top:18px">＋ Add shortcut</a>
     <div class="btnrow"><button class="btn ghost" id="iosImportNow">Import bank texts now</button></div>
@@ -814,7 +813,7 @@ $("#importTexts").onchange = e => {
     e.target.value = "";
     const list = parseTextsFile(rd.result);
     if (!list.length) return toast("That file has no bank texts in it yet");
-    S.settings.sms.iosUsed = true;
+    S.settings.sms.iosUsed = true; S.settings.sms.lastImport = isoToday();
     const r = ingestSms(list); save(); render(); smsSummary(r, false);
   };
   rd.readAsText(f);
@@ -926,6 +925,7 @@ function renderHome(){
 
   const pend = S.pending.length;
   $("#v-home").innerHTML = `
+    ${!HAS_SMS && S.settings.sms.iosUsed ? `<button class="banner" id="iosImport"><span style="font-size:18px">⇩</span><div class="grow"><b>Import new bank texts</b><small>${S.settings.sms.lastImport ? "Last import " + prettyDate(S.settings.sms.lastImport) : "From Downloads › meridian-bank-texts.txt"}</small></div><span class="chev">›</span></button>` : ""}
     ${pend ? `<button class="banner" id="goReview"><span style="font-size:18px">✉</span><div class="grow"><b>${pend} bank text${pend === 1 ? "" : "s"} to review</b><small>Confirm the category and they’re logged</small></div><span class="chev">›</span></button>` : ""}
     <div class="card hero">
       <div class="label">Remaining balance</div>
@@ -1113,7 +1113,7 @@ function renderSettings(){
       ${Object.keys(S.rules).length ? `<button class="set-row" id="smsRules"><div class="grow">Forget learned categories<small>${Object.keys(S.rules).length} shop${Object.keys(S.rules).length === 1 ? "" : "s"} remembered</small></div><span class="chev">›</span></button>` : ""}
     </div>` : `<div class="label section-label">Bank texts (iPhone)</div>
     <div class="set-list">
-      <button class="set-row" id="iosImport"><div class="grow">Import bank texts<small>From the file your Shortcuts automation fills</small></div><span class="chev">›</span></button>
+      <button class="set-row" id="iosImport"><div class="grow">Import bank texts<small>Downloads › meridian-bank-texts.txt</small></div><span class="chev">›</span></button>
       <button class="set-row" id="iosSetup"><div class="grow">Set up · Add shortcut<small>One tap plus a 30-second automation</small></div><span class="chev">›</span></button>
       <button class="set-row" id="smsAuto"><div class="grow">Add straight away when sure<small>Off = everything waits in “To review”</small></div><span class="switch ${S.settings.sms.autoAdd ? "on" : ""}"></span></button>
     </div>`}
