@@ -475,6 +475,103 @@ input[type=date].input{min-height:48px}
 .banner .grow{flex:1}
 .banner small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 
+/* ===================== motion ===================== */
+#app{transition:transform .42s cubic-bezier(.2,.8,.2,1),filter .42s,border-radius .42s;will-change:transform}
+body.sheet-on #app{transform:scale(.93) translateY(10px);filter:brightness(.9) saturate(.9);border-radius:22px}
+.view{animation:none}
+.view.enter > *{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
+.view.enter > *:nth-child(2){animation-delay:.04s}.view.enter > *:nth-child(3){animation-delay:.08s}
+.view.enter > *:nth-child(4){animation-delay:.12s}.view.enter > *:nth-child(5){animation-delay:.16s}
+.view.enter > *:nth-child(6){animation-delay:.2s}.view.enter > *:nth-child(7){animation-delay:.24s}
+.view.enter > *:nth-child(n+8){animation-delay:.28s}
+@keyframes rise{from{opacity:0;transform:translate(var(--dx,0px),18px) scale(.985)}to{opacity:1;transform:none}}
+.btn,.chip,.cat,.set-row,.tx,.banner,.cta,.quick button,.monthlist button,.rv .acts button,.theme-seg button,
+nav.tabs button,.monthbar button,.kp button,.calc-pill,.linkbtn{transition:transform .16s cubic-bezier(.3,.7,.4,1.4),background-color .2s,box-shadow .16s}
+.btn:active,.chip:active,.cat:active,.banner:active,.cta:active,.quick button:active,.monthlist button:active,
+.rv .acts button:active,.theme-seg button:active,.monthbar button:active,.linkbtn:active{transform:scale(.96)}
+.set-row:active,.tx:active{transform:scale(.985)}
+nav.tabs button:active{transform:scale(.9)}
+nav.tabs button svg{transition:transform .3s cubic-bezier(.3,.7,.4,1.5)}
+nav.tabs button.on svg{transform:translateY(-2px) scale(1.08)}
+#fab .fab{transition:transform .3s cubic-bezier(.3,.7,.4,1.5),box-shadow .2s}
+#fab:active .fab{transform:translateY(-12px) scale(.9)}
+#fab .fab svg{transition:transform .35s cubic-bezier(.3,.7,.4,1.5)}
+body.sheet-on #fab .fab svg{transform:rotate(45deg)}
+.fillbar{transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.view.enter .fillbar{animation:grow .9s cubic-bezier(.2,.8,.2,1) both .15s}
+@keyframes grow{from{width:0}}
+.view.enter .donut svg circle:not(:first-child){animation:spin .9s cubic-bezier(.2,.8,.2,1) both .1s}
+@keyframes spin{from{stroke-dasharray:0 1000}}
+.toast.on{animation:toastIn .45s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes toastIn{from{transform:translateY(30px) scale(.96);opacity:0}}
+.dialog.on{animation:pop .3s cubic-bezier(.3,.8,.4,1.3)}
+@keyframes pop{from{transform:translateY(-50%) scale(.9);opacity:0}}
+
+/* ---- amount pad ---- */
+.amt-wrap{text-align:center;padding:6px 0 4px;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.amt{display:flex;align-items:baseline;justify-content:center;gap:2px;font-weight:700;letter-spacing:-.03em;line-height:1.05;max-width:100%;white-space:nowrap;transition:font-size .2s}
+.amt .cur{font-size:.42em;color:var(--muted);font-weight:600;margin-right:8px;letter-spacing:0}
+.amt .op{color:var(--faint);font-size:.62em;margin:0 6px;font-weight:600}
+.amt .ch{display:inline-block}
+.amt .ch.new{animation:digitIn .32s cubic-bezier(.2,.9,.3,1.25)}
+@keyframes digitIn{from{transform:translateY(55%) scale(.7);opacity:0;filter:blur(4px)}}
+.amt.empty .ph{color:var(--faint)}
+.amt.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+.calc-pill{margin-top:8px;padding:6px 14px;border-radius:999px;background:var(--raised);border:1px solid var(--line);font-weight:600;font-size:14px;color:var(--muted);
+  opacity:0;transform:translateY(-6px) scale(.9);pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.3,.8,.4,1.4)}
+.calc-pill.on{opacity:1;transform:none;pointer-events:auto}
+.calc-pill b{color:var(--text)}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px}
+.kp button{height:52px;border-radius:16px;background:var(--raised);font-size:22px;font-weight:600;display:grid;place-items:center;user-select:none;-webkit-user-select:none}
+.kp button.op{background:transparent;color:var(--muted);font-size:20px;border:1px solid var(--line)}
+.kp button.op.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.kp button:active,.kp button.hit{transform:scale(.88);background:var(--line)}
+.kp button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.catgrid.scroll{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--pad));padding:2px var(--pad) 6px;scrollbar-width:none}
+.catgrid.scroll::-webkit-scrollbar{display:none}
+.catgrid.scroll .cat{flex:none}
+.duo{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;margin-bottom:6px}
+.duo .input{padding:11px 12px;font-size:14px}
+/* ---- swipe to confirm ---- */
+.swipe{position:relative;height:60px;border-radius:999px;background:var(--raised);overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;border:1px solid var(--line)}
+.swipe-fill{position:absolute;left:0;top:0;bottom:0;width:60px;border-radius:999px;background:var(--sw,var(--coral));opacity:.22}
+.swipe-label{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:15px;color:var(--muted);padding-left:40px;
+  background:linear-gradient(90deg,var(--muted) 0%,var(--muted) 40%,var(--text) 50%,var(--muted) 60%,var(--muted) 100%);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 2.4s linear infinite}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:-150% 0}}
+.swipe-knob{position:absolute;left:4px;top:4px;width:52px;height:52px;border-radius:50%;background:var(--sw,var(--coral));display:grid;place-items:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:grab;touch-action:none}
+.swipe-knob svg{width:24px;height:24px;stroke:var(--on-accent);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.swipe.back .swipe-knob,.swipe.back .swipe-fill{transition:transform .45s cubic-bezier(.3,.8,.4,1.3),width .45s cubic-bezier(.3,.8,.4,1.3)}
+.swipe.nudge .swipe-knob{animation:nudge .6s}
+@keyframes nudge{30%{transform:translateX(26px)}60%{transform:translateX(-3px)}}
+[data-style="pop"] .swipe,[data-style="pop"] .kp button{border:2px solid var(--ink)}
+[data-style="pop"] .swipe-knob{border:2px solid var(--ink);box-shadow:2px 2px 0 var(--hard)}
+[data-style="pop"] .kp button.op.on{background:var(--gold);color:#111}
+[data-style="dune"] .amt{font-family:"DM Serif Display",Georgia,serif;font-weight:400;letter-spacing:0}
+[data-style="dune"][data-theme="light"] .kp button:not(.op){background:rgba(234,234,220,.75)}
+/* ---- success splash ---- */
+.splash{position:fixed;inset:0;z-index:95;display:none;place-items:center;text-align:center;color:var(--on-accent);
+  background:var(--sp,var(--mint));clip-path:circle(0px at var(--sx,50%) var(--sy,90%))}
+.splash.on{display:grid;animation:burst .62s cubic-bezier(.6,0,.2,1) forwards}
+.splash.out{animation:fadeOut .35s ease forwards}
+@keyframes burst{to{clip-path:circle(150vmax at var(--sx,50%) var(--sy,90%))}}
+@keyframes fadeOut{from{clip-path:circle(150vmax at var(--sx,50%) var(--sy,90%))}to{opacity:0;clip-path:circle(150vmax at var(--sx,50%) var(--sy,90%));transform:scale(1.04)}}
+.splash .ck{width:84px;height:84px;margin:0 auto 14px}
+.splash .ck path{stroke:currentColor;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80;animation:draw .45s .45s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.splash .sa{font-size:44px;font-weight:800;letter-spacing:-.03em;opacity:0;animation:up .5s .55s cubic-bezier(.2,.9,.3,1.2) forwards}
+.splash .ss{font-size:16px;font-weight:600;margin-top:6px;opacity:0;animation:up .5s .65s cubic-bezier(.2,.9,.3,1.2) forwards}
+.splash .sh{position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 34px);font-size:12.5px;opacity:0;animation:up .5s 1s forwards}
+.splash .sh,.splash .ss{color:color-mix(in srgb,var(--on-accent) 75%,transparent)}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+[data-style="dune"] .splash .sa{font-family:"DM Serif Display",Georgia,serif;font-weight:400}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+  body.sheet-on #app{transform:none}
+}
+
 /* calculator */
 .calc-f{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;background:var(--raised);border:1px solid var(--line);
   border-radius:14px;padding:10px 14px;margin-bottom:10px}
@@ -495,6 +592,7 @@ input[type=date].input{min-height:48px}
 </head>
 <body>
 
+<div id="app">
 <header class="top">
   <div class="brandrow">
     <div class="brand"><b>◆</b> MERIDIAN</div>
@@ -514,6 +612,7 @@ input[type=date].input{min-height:48px}
   <section class="view" id="v-plan"></section>
   <section class="view" id="v-settings"></section>
 </main>
+</div>
 
 <nav class="tabs">
   <button data-tab="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Overview</button>
@@ -526,6 +625,7 @@ input[type=date].input{min-height:48px}
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet"></div>
 <div class="dialog" id="dialog"></div>
+<div class="splash" id="splash"></div>
 <div class="toast" id="toast"><span id="toastText"></span><button id="toastBtn"></button></div>
 <input type="file" id="importFile" accept=".json,application/json" class="hidden">
 <input type="file" id="importTexts" accept=".txt,text/plain" class="hidden">
@@ -1022,11 +1122,41 @@ window.meridianSmsPermission = granted => {
   }
 };
 
+/* ============================================================ motion helpers */
+const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function buzz(ms){ try { if (navigator.vibrate) navigator.vibrate(ms); } catch(e){} }
+function countUp(root){
+  if (REDUCED || !root) return;
+  root.querySelectorAll(".hero .big, .kpi .v.num, .goal-amt, .donut .center b, .sumrow .v, .tile .big.num, .ring .center b, .hero .flow .v").forEach(el => {
+    const node = [...el.childNodes].find(n => n.nodeType === 3 && /\d/.test(n.textContent)); if (!node) return;
+    const full = node.textContent, m = full.match(/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/); if (!m) return;
+    const target = parseFloat(m[0].replace(/,/g, "")); if (!(target > 0)) return;
+    const dec = (m[0].split(".")[1] || "").length, pre = full.slice(0, m.index), post = full.slice(m.index + m[0].length);
+    const t0 = performance.now(), dur = 800;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      node.textContent = k < 1 ? pre + fmt(target * e, dec) + post : full;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+function enterView(dx){
+  const v = document.querySelector(".view.on"); if (!v || REDUCED) return;
+  v.style.setProperty("--dx", (dx || 0) + "px");
+  v.classList.remove("enter"); void v.offsetWidth; v.classList.add("enter");
+  clearTimeout(enterView.t); enterView.t = setTimeout(() => v.classList.remove("enter"), 900);
+  countUp(v);
+}
+
 /* ============================================================ UI state */
 let tab = "home", month = currentKey(), actFilter = "all";
 const titles = {home:"Overview", activity:"Activity", plan:"Plan", settings:"Settings"};
 
+const TAB_ORDER = ["home", "activity", "plan", "settings"];
 function setTab(t){
+  const dir = TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(tab);
+  if (t !== tab) buzz(6);
   tab = t;
   document.querySelectorAll("nav.tabs button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-" + t));
@@ -1034,6 +1164,7 @@ function setTab(t){
   $("#monthbar").classList.toggle("hidden", t === "settings");
   window.scrollTo(0, 0);
   render();
+  enterView(dir > 0 ? 28 : dir < 0 ? -28 : 0);
 }
 function render(){
   $("#mLabel").innerHTML = `${keyName(month)}<small>${month === currentKey() ? "THIS MONTH" : "TAP TO CHANGE"}</small>`;
@@ -1335,8 +1466,13 @@ function renderSettings(){
 
 /* ============================================================ sheets & dialogs */
 const stack = [];
-function openSheet(html){ $("#sheet").innerHTML = `<div class="grab"></div>` + html; $("#sheet").scrollTop = 0; $("#sheet").classList.add("on"); $("#scrim").classList.add("on"); stack.push("sheet"); }
-function closeSheet(){ $("#sheet").classList.remove("on"); if (!$("#dialog").classList.contains("on")) $("#scrim").classList.remove("on"); const i = stack.lastIndexOf("sheet"); if (i > -1) stack.splice(i,1); }
+function openSheet(html){
+  $("#sheet").innerHTML = `<div class="grab"></div>` + html; $("#sheet").scrollTop = 0;
+  $("#app").style.transformOrigin = `50% ${window.scrollY + window.innerHeight * 0.45}px`;
+  document.body.classList.add("sheet-on");
+  $("#sheet").classList.add("on"); $("#scrim").classList.add("on"); stack.push("sheet");
+}
+function closeSheet(){ document.body.classList.remove("sheet-on"); $("#sheet").classList.remove("on"); if (!$("#dialog").classList.contains("on")) $("#scrim").classList.remove("on"); const i = stack.lastIndexOf("sheet"); if (i > -1) stack.splice(i,1); }
 function openDialog(html){ $("#dialog").innerHTML = html; $("#dialog").classList.add("on"); $("#scrim").classList.add("on"); stack.push("dialog"); }
 function closeDialog(){ $("#dialog").classList.remove("on"); if (!$("#sheet").classList.contains("on")) $("#scrim").classList.remove("on"); const i = stack.lastIndexOf("dialog"); if (i > -1) stack.splice(i,1); }
 function confirmBox(title, text, okText, danger){
@@ -1354,61 +1490,188 @@ function toast(text, btn, fn, ms){
 $("#scrim").onclick = () => { if ($("#dialog").classList.contains("on")) return; closeSheet(); };
 
 /* ---- add / edit transaction */
+const OPS = {"+": "+", "-": "−", "*": "×", "/": "÷"};
+function evalExpr(expr){
+  const parts = expr.match(/\d*\.?\d+|\d+\.|[+\-*/]/g); if (!parts) return NaN;
+  const nums = [], ops = [];
+  for (const p of parts) { if ("+-*/".includes(p)) ops.push(p); else nums.push(parseFloat(p)); }
+  if (nums.length !== ops.length + 1) nums.length = ops.length;   // trailing operator
+  if (!nums.length) return NaN;
+  const n = [nums[0]], o = [];
+  for (let i = 0; i < ops.length && i + 1 < nums.length; i++) {
+    const op = ops[i], v = nums[i + 1];
+    if (op === "*") n[n.length - 1] *= v; else if (op === "/") n[n.length - 1] = v ? n[n.length - 1] / v : NaN;
+    else { o.push(op); n.push(v); }
+  }
+  let r = n[0]; for (let i = 0; i < o.length; i++) r = o[i] === "+" ? r + n[i + 1] : r - n[i + 1];
+  return Math.round(r * 100) / 100;
+}
+function successSplash(rec, from, after){
+  const sp = $("#splash"), cat = catOf(rec.type, rec.catId);
+  sp.style.setProperty("--sp", rec.type === "income" ? "var(--mint)" : "var(--gold)");
+  sp.style.setProperty("--sx", (from ? from.x : window.innerWidth / 2) + "px");
+  sp.style.setProperty("--sy", (from ? from.y : window.innerHeight * 0.85) + "px");
+  sp.innerHTML = `<div><svg class="ck" viewBox="0 0 84 84"><path d="M22 44 L37 58 L63 28"/></svg>
+    <div class="sa num">${rec.type === "income" ? "+" : "−"}${egp(rec.amount, rec.amount % 1 ? 2 : 0)}</div>
+    <div class="ss">${rec.type === "income" ? "Income" : "Expense"} · ${esc(cat ? cat.name : "Uncategorised")}</div></div>
+    <div class="sh">Tap anywhere to close</div>`;
+  sp.classList.remove("out"); sp.classList.add("on"); buzz([12, 40, 18]);
+  let done = false;
+  const close = () => { if (done) return; done = true; sp.classList.add("out");
+    setTimeout(() => { sp.classList.remove("on", "out"); sp.innerHTML = ""; after && after(); }, 340); };
+  sp.onclick = close; setTimeout(close, REDUCED ? 900 : 1900);
+}
 function txSheet(existing, pendingItem){
   const pf = pendingItem || null;
   let type = existing ? existing.type : pf ? pf.type : "expense";
   let catId = existing ? existing.catId : pf ? pf.catId : null;
   const defDate = existing ? existing.date : pf ? pf.date : (month === currentKey() ? isoToday() : `${month}-01`);
-  const draw = () => {
+  const start = existing ? existing.amount : pf ? pf.amount : "";
+  let expr = start === "" ? "" : String(Math.round(start * 100) / 100);
+  const preNote = existing ? (existing.note || "") : pf ? pf.merchant : "";
+  const isNew = !existing;
+  const icon = d => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+
+  openSheet(`<h2>${existing ? "Edit transaction" : pf ? "Review bank text" : "New transaction"}</h2>
+    ${pf ? `<div class="smsraw">${esc(pf.raw)}</div>` : ""}
+    <div class="seg" id="seg"><button data-type="expense" class="exp">Expense</button><button data-type="income" class="inc">Income</button></div>
+    <div class="amt-wrap"><div class="amt num" id="amt"></div><button class="calc-pill" id="calcPill"></button></div>
+    <div class="catgrid scroll" id="catgrid"></div>
+    <div class="duo"><input type="date" class="input" id="fDate" value="${defDate}" min="2000-01-01" max="2100-12-31" aria-label="Date">
+      <input class="input" id="fNote" maxlength="80" placeholder="Note (optional)" value="${esc(preNote)}" aria-label="Note"></div>
+    <div class="kp" id="kp">
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button class="op" data-k="+">+</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="op" data-k="-">−</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="op" data-k="*">×</button>
+      <button data-k=".">.</button><button data-k="0">0</button><button data-k="del" aria-label="Delete">${icon("M21 5H9l-6 7 6 7h12zM18 9l-6 6M12 9l6 6")}</button><button class="op" data-k="/">÷</button>
+    </div>
+    <div class="err" id="fErr"></div>
+    ${isNew ? `<div class="swipe" id="swipe"><div class="swipe-fill"></div><div class="swipe-label" id="swLabel"></div>
+        <div class="swipe-knob" id="knob">${icon("M5 12h14M13 6l6 6-6 6")}</div></div>`
+      : `<button class="btn" id="saveTx">Save changes</button>`}
+    ${pf ? `<div class="btnrow"><button class="btn ghost" id="skipPend">Skip — not a transaction</button></div>` : ""}
+    ${existing ? `<div class="btnrow"><button class="btn danger" id="delTx">Delete</button></div>` : ""}`);
+
+  const lastNum = () => (expr.match(/[\d.]*$/) || [""])[0];
+  const hasOp = () => /[+\-*/]/.test(expr.replace(/^-/, ""));
+  function drawAmt(newIdx){
+    const el = $("#amt");
+    if (!expr) { el.className = "amt num empty"; el.innerHTML = `<span class="cur">EGP</span><span class="ph">0</span>`; }
+    else {
+      el.className = "amt num";
+      let html = `<span class="cur">EGP</span>`, i = 0;
+      // group digits with thousands separators while keeping per-character spans
+      for (const tok of expr.match(/[\d.]+|[+\-*/]/g) || []) {
+        if (OPS[tok]) { html += `<span class="op ch ${i === newIdx ? "new" : ""}">${OPS[tok]}</span>`; i++; continue; }
+        const [w, d] = tok.split("."), wf = w ? Number(w).toLocaleString("en-US") : (tok.startsWith(".") ? "0" : "");
+        let wi = 0;
+        for (const c of wf) { if (c === ",") { html += `<span class="ch">,</span>`; continue; } html += `<span class="ch ${i + wi === newIdx ? "new" : ""}">${c}</span>`; wi++; }
+        i += w.length;
+        if (tok.includes(".")) { html += `<span class="ch ${i === newIdx ? "new" : ""}">.</span>`; i++;
+          for (const c of d || "") { html += `<span class="ch ${i === newIdx ? "new" : ""}">${c}</span>`; i++; } }
+      }
+      el.innerHTML = html;
+    }
+    const len = expr.length;
+    el.style.fontSize = (len > 13 ? 30 : len > 10 ? 36 : len > 7 ? 44 : 54) + "px";
+    const pill = $("#calcPill"), r = evalExpr(expr);
+    if (hasOp() && /\d$/.test(expr) && Number.isFinite(r)) { pill.innerHTML = `= <b>${fmt(r, r % 1 ? 2 : 0)}</b>`; pill.classList.add("on"); }
+    else pill.classList.remove("on");
+    document.querySelectorAll("#kp .op").forEach(b => b.classList.toggle("on", expr.endsWith(b.dataset.k)));
+  }
+  function press(k){
+    const before = expr;
+    if (k === "del") expr = expr.slice(0, -1);
+    else if ("+-*/".includes(k)) {
+      if (!expr) { $("#amt").classList.add("shake"); setTimeout(() => $("#amt").classList.remove("shake"), 360); return; }
+      expr = /[+\-*/]$/.test(expr) ? expr.slice(0, -1) + k : (expr.endsWith(".") ? expr.slice(0, -1) : expr) + k;
+    } else if (k === ".") { if (!lastNum().includes(".")) expr += lastNum() ? "." : "0."; }
+    else {
+      const ln = lastNum();
+      if (ln.includes(".") && ln.split(".")[1].length >= 2) { $("#amt").classList.add("shake"); setTimeout(() => $("#amt").classList.remove("shake"), 360); return; }
+      if (ln === "0") expr = expr.slice(0, -1);
+      if (expr.replace(/[^\d]/g, "").length >= 12) return;
+      expr += k;
+    }
+    if (expr !== before) buzz(5);
+    $("#fErr").textContent = "";
+    drawAmt(expr.length > before.length ? expr.replace(/,/g, "").length - 1 : -1);
+  }
+  function draw(){
     const list = cats(type);
     if (catId && !list.find(c => c.id === catId) && !(existing && existing.catId === catId && existing.type === type)) catId = null;
     $("#catgrid").innerHTML = list.length ? list.map(c => `<button class="cat ${c.id === catId ? "on" : ""}" data-cat="${c.id}"><i class="dot" style="background:${cc(c.color)}"></i>${esc(c.name)}</button>`).join("")
       : `<div class="empty" style="padding:8px 0">No ${type} categories yet — add one in Settings.</div>`;
     document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b.dataset.type === type));
-    $("#saveTx").style.background = type === "income" ? "var(--mint)" : "var(--coral)";
+    const col = type === "income" ? "var(--mint)" : "var(--coral)";
+    if (isNew) { $("#swipe").style.setProperty("--sw", col); $("#swLabel").textContent = `Swipe to add ${type}`; }
+    else $("#saveTx").style.background = col;
+  }
+  drawAmt(-1); draw();
+  const sel = $("#catgrid .cat.on"); if (sel) sel.scrollIntoView({inline: "center", block: "nearest"});
+
+  $("#kp").addEventListener("pointerdown", e => { const b = e.target.closest("[data-k]"); if (!b) return; e.preventDefault();
+    b.classList.add("hit"); setTimeout(() => b.classList.remove("hit"), 120); press(b.dataset.k); });
+  $("#calcPill").onclick = () => { const r = evalExpr(expr); if (!Number.isFinite(r)) return;
+    expr = String(Math.abs(r)); buzz(8); drawAmt(-1); $("#amt").querySelectorAll(".ch").forEach((c, i) => { c.classList.add("new"); c.style.animationDelay = (i * 30) + "ms"; }); };
+  const onKey = e => {
+    if (!$("#sheet").classList.contains("on") || !$("#kp")) { document.removeEventListener("keydown", onKey); return; }
+    if (e.target.closest && e.target.closest("input")) return;
+    const k = e.key === "Backspace" ? "del" : e.key === "x" ? "*" : e.key;
+    if (/^[\d.+\-*/]$/.test(k) || k === "del") { e.preventDefault(); press(k); }
   };
-  const preAmt = existing ? existing.amount : pf ? pf.amount : "";
-  const preNote = existing ? (existing.note || "") : pf ? pf.merchant : "";
-  openSheet(`<h2>${existing ? "Edit transaction" : pf ? "Review bank text" : "New transaction"}</h2>
-    ${pf ? `<div class="smsraw">${esc(pf.raw)}</div>` : ""}
-    <div class="seg" id="seg"><button data-type="expense" class="exp">Expense</button><button data-type="income" class="inc">Income</button></div>
-    <div class="amount-box"><span>EGP</span><input id="fAmt" class="num" inputmode="decimal" placeholder="0" autocomplete="off" value="${preAmt}"></div>
-    <div class="field"><label class="label">Category</label><div class="catgrid" id="catgrid"></div></div>
-    <div class="field"><label class="label">Date</label><input type="date" class="input" id="fDate" value="${defDate}" min="2000-01-01" max="2100-12-31"></div>
-    <div class="field"><label class="label">Note <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label><input class="input" id="fNote" maxlength="80" placeholder="e.g. dinner with friends" value="${esc(preNote)}"></div>
-    <div class="err" id="fErr"></div>
-    <button class="btn" id="saveTx">${existing ? "Save changes" : pf ? "Add transaction" : "Add transaction"}</button>
-    ${pf ? `<div class="btnrow"><button class="btn ghost" id="skipPend">Skip — not a transaction</button></div>` : ""}
-    ${existing ? `<div class="btnrow"><button class="btn danger" id="delTx">Delete</button></div>` : ""}`);
-  draw();
-  if (!existing && !pf) setTimeout(() => $("#fAmt").focus(), 300);
+  document.addEventListener("keydown", onKey);
   if (pf) $("#skipPend").onclick = () => { S.pending = S.pending.filter(x => x.id !== pf.id); save(); closeSheet(); render(); toast("Skipped"); };
-  $("#seg").onclick = e => { const b = e.target.closest("button"); if (!b) return; type = b.dataset.type; draw(); };
-  $("#catgrid").onclick = e => { const b = e.target.closest("[data-cat]"); if (!b) return; catId = b.dataset.cat; draw(); };
-  $("#saveTx").onclick = () => {
-    const a = parseNum($("#fAmt").value);
-    const date = $("#fDate").value;
-    if (!(a > 0)) return $("#fErr").textContent = "Enter an amount greater than 0.";
-    if (a >= 1e9) return $("#fErr").textContent = "That amount looks too large.";
-    if (!catId) return $("#fErr").textContent = "Pick a category.";
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < "2000-01-01" || date > "2100-12-31") return $("#fErr").textContent = "Pick a valid date.";
+  $("#seg").onclick = e => { const b = e.target.closest("button"); if (!b) return; type = b.dataset.type; buzz(6); draw(); };
+  $("#catgrid").onclick = e => { const b = e.target.closest("[data-cat]"); if (!b) return; catId = b.dataset.cat; buzz(6); draw(); };
+
+  function commit(from){
+    const a = evalExpr(expr), date = $("#fDate").value;
+    const fail = m => { $("#fErr").textContent = m; buzz([10, 30, 10]); return false; };
+    if (!(a > 0)) return fail(hasOp() ? "That works out to zero or less — check the sum." : "Enter an amount greater than 0.");
+    if (a >= 1e9) return fail("That amount looks too large.");
+    if (!catId) return fail("Pick a category.");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < "2000-01-01" || date > "2100-12-31") return fail("Pick a valid date.");
     const rec = {id: existing ? existing.id : uid(), type, amount: Math.round(a*100)/100, catId, date, note: $("#fNote").value.trim(), created: existing ? existing.created : Date.now()};
     const fromSms = pf || (existing && existing.source === "sms");
     if (fromSms) rec.source = "sms";
     if (existing) S.tx[S.tx.findIndex(t => t.id === existing.id)] = rec; else S.tx.push(rec);
     if (pf) { S.pending = S.pending.filter(x => x.id !== pf.id); learnRule(type, pf.merchant, catId); }
     else if (existing && existing.source === "sms" && existing.catId !== catId) learnRule(type, existing.note, catId);
-    save(); closeSheet();
-    month = date.slice(0,7);
-    render();
-    let msg = existing ? "Changes saved" : `${type === "income" ? "Income" : "Expense"} of ${amt(rec.amount)} added`;
-    const gp = goalPlan();
-    if (!existing && type === "income" && gp && gp.latest && gp.latest.tx.id === rec.id && !gp.done) {
-      msg = gp.latest.setAside > 0 ? `Income added · put aside ${egp(gp.latest.setAside)} for ${gp.g.name}` : `Income added · this month’s goal target is already covered`;
-      toast(msg, "PLAN", () => setTab("plan"), 6500); return;
-    }
-    toast(msg);
-  };
+    save();
+    const finish = () => {
+      const oldMonth = month; month = date.slice(0,7); render();
+      if (month !== oldMonth) enterView(month > oldMonth ? 28 : -28); else countUp(document.querySelector(".view.on"));
+      const gp = goalPlan();
+      if (!existing && type === "income" && gp && gp.latest && gp.latest.tx.id === rec.id && !gp.done) {
+        toast(gp.latest.setAside > 0 ? `Put aside ${egp(gp.latest.setAside)} of this for ${gp.g.name}` : `This month’s goal target is already covered`, "PLAN", () => setTab("plan"), 6500);
+      } else if (existing) toast("Changes saved");
+    };
+    closeSheet();
+    if (isNew) successSplash(rec, from, finish); else finish();
+    return true;
+  }
+  if (!isNew) $("#saveTx").onclick = () => commit(null);
+
+  if (isNew) {
+    const sw = $("#swipe"), knob = $("#knob"), fill = sw.querySelector(".swipe-fill"), label = $("#swLabel");
+    let x0 = null, dx = 0, moved = false;
+    const max = () => sw.clientWidth - knob.offsetWidth - 8;
+    const setX = x => { knob.style.transform = `translateX(${x}px)`; fill.style.width = (x + 60) + "px"; label.style.opacity = String(Math.max(0, 1 - x / (max() * 0.6))); };
+    const reset = () => { sw.classList.add("back"); setX(0); setTimeout(() => sw.classList.remove("back"), 460); };
+    knob.addEventListener("pointerdown", e => { x0 = e.clientX; dx = 0; moved = false; sw.classList.remove("back", "nudge"); knob.setPointerCapture(e.pointerId); });
+    knob.addEventListener("pointermove", e => { if (x0 === null) return; dx = Math.max(0, Math.min(max(), e.clientX - x0)); if (dx > 4) moved = true; setX(dx); });
+    const end = () => {
+      if (x0 === null) return; x0 = null;
+      if (!moved) { sw.classList.add("nudge"); setTimeout(() => sw.classList.remove("nudge"), 620); label.textContent = "Swipe right to confirm →"; return; }
+      if (dx >= max() * 0.82) {
+        setX(max()); buzz(10);
+        const r = knob.getBoundingClientRect();
+        if (!commit({x: r.left + r.width / 2, y: r.top + r.height / 2})) reset();
+      } else reset();
+    };
+    knob.addEventListener("pointerup", end); knob.addEventListener("pointercancel", end);
+  }
   if (existing) $("#delTx").onclick = async () => {
     if (!await confirmBox("Delete this transaction?", `${amt(existing.amount)} · ${catOf(existing.type, existing.catId)?.name || "Uncategorised"}`, "Delete", true)) return;
     const idx = S.tx.findIndex(t => t.id === existing.id), removed = S.tx.splice(idx, 1)[0];
@@ -1479,8 +1742,8 @@ function monthSheet(){
   draw();
   $("#yPrev").onclick = () => { year--; draw(); };
   $("#yNext").onclick = () => { year++; draw(); };
-  $("#mlist").onclick = e => { const b = e.target.closest("[data-k]"); if (!b) return; month = b.dataset.k; closeSheet(); render(); };
-  $("#mNow").onclick = () => { month = currentKey(); closeSheet(); render(); };
+  $("#mlist").onclick = e => { const b = e.target.closest("[data-k]"); if (!b) return; const old = month; month = b.dataset.k; closeSheet(); render(); enterView(month > old ? 28 : -28); };
+  $("#mNow").onclick = () => { const old = month; month = currentKey(); closeSheet(); render(); enterView(month > old ? 28 : month < old ? -28 : 0); };
 }
 
 /* ---- savings goal */
@@ -1632,8 +1895,8 @@ $("#importFile").onchange = e => {
 /* ============================================================ events */
 document.querySelectorAll("nav.tabs button[data-tab]").forEach(b => b.onclick = () => setTab(b.dataset.tab));
 $("#fab").onclick = () => txSheet(null);
-$("#mPrev").onclick = () => { month = shiftKey(month, -1); render(); };
-$("#mNext").onclick = () => { month = shiftKey(month, 1); render(); };
+$("#mPrev").onclick = () => { month = shiftKey(month, -1); render(); enterView(-28); buzz(6); };
+$("#mNext").onclick = () => { month = shiftKey(month, 1); render(); enterView(28); buzz(6); };
 $("#mLabel").onclick = monthSheet;
 document.addEventListener("click", async e => {
   const f = e.target.closest("[data-filter]"); if (f) { actFilter = f.dataset.filter; renderActivity(); return; }
@@ -1692,6 +1955,7 @@ if (!window.Android && location.protocol === "https:") {
 }
 
 render();
+enterView(0);
 setTimeout(() => pullSmsInbox(true), 400);
 </script>
 </body>
