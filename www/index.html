@@ -205,6 +205,92 @@
 [data-style="dune"][data-theme="light"] .chip:not(.on),[data-style="dune"][data-theme="light"] .rv .acts button:not(.yes){background:rgba(248,243,236,.6)}
 [data-style="dune"][data-theme="light"] nav.tabs{background:rgba(236,226,218,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top-color:rgba(156,72,60,.12)}
 
+/* ===== Mono style: black & white with one vermilion accent ===== */
+:root[data-style="mono"]{
+  --bg:#F1F1ED;--card:#FFFFFF;--raised:#ECECE7;--line:#E2E2DC;--text:#111111;--muted:#85857F;--faint:#B3B3AD;
+  --mint:#1F8F55;--coral:#D9502F;--gold:#D9502F;--amber:#C9742E;--on-accent:#FFFFFF;
+  --navbg:#111111;--grid:#E6E6E0;--zero:#C9C9C3;--glow:transparent;--edge:transparent;--shadow:0 10px 24px rgba(217,80,47,.35);
+  --toast-btn:#F06A4C;--gold-text:#D9502F;--ink:#111111;
+  --hero-bg:#111111;--hero-fg:#FFFFFF;--hero-sub:#2A2A2A;
+  --pill:#111111;--pill-icon:#8A8A84;--pill-on:#FFFFFF;--pill-on-icon:#111111;
+  --r:20px;color-scheme:light;
+}
+:root[data-style="mono"][data-theme="dark"]{
+  --bg:#0D0D0D;--card:#1A1A1A;--raised:#242424;--line:#2E2E2E;--text:#F2F2EE;--muted:#9A9A94;--faint:#5E5E5A;
+  --mint:#3CC27A;--coral:#F06A4C;--gold:#F06A4C;--amber:#E39350;--on-accent:#111111;
+  --navbg:#F2F2EE;--grid:#262626;--zero:#444;--shadow:0 10px 24px rgba(240,106,76,.3);
+  --toast-btn:#D9502F;--gold-text:#F06A4C;--ink:#F2F2EE;
+  --hero-bg:#F2F2EE;--hero-fg:#111111;--hero-sub:#E0E0DA;
+  --pill:#F2F2EE;--pill-icon:#7A7A75;--pill-on:#111111;--pill-on-icon:#F2F2EE;
+  color-scheme:dark;
+}
+[data-style="mono"] .page-title{font-size:31px;font-weight:700;letter-spacing:-.025em}
+[data-style="mono"] .brand b{color:var(--gold)}
+[data-style="mono"] .card,[data-style="mono"] .kpi,[data-style="mono"] .txlist,[data-style="mono"] .set-list,[data-style="mono"] .sumrow>div,
+[data-style="mono"] .theme-seg,[data-style="mono"] .review,[data-style="mono"] .banner,[data-style="mono"] .monthbar{border:0;box-shadow:none}
+[data-style="mono"] .card h3,[data-style="mono"] .goal-name{font-weight:700}
+[data-style="mono"] .hero{background:var(--hero-bg);color:var(--hero-fg)}
+[data-style="mono"] .hero .label,[data-style="mono"] .hero .delta{color:color-mix(in srgb,var(--hero-fg) 60%,transparent)}
+[data-style="mono"] .hero .big{font-size:40px;font-weight:700}
+[data-style="mono"] .hero .flow>div{background:var(--hero-sub);color:var(--hero-fg)}
+[data-style="mono"] .hero .flow .delta.up-good{color:var(--mint)}[data-style="mono"] .hero .flow .delta.up-bad{color:var(--coral)}
+[data-style="mono"] .kpi::before{display:none}
+[data-style="mono"] .kpi .v{font-size:21px;font-weight:700}
+[data-style="mono"] .kpi[style*="--coral"]{background:var(--gold);color:var(--on-accent)}
+[data-style="mono"] .kpi[style*="--coral"] .label,[data-style="mono"] .kpi[style*="--coral"] .s{color:color-mix(in srgb,var(--on-accent) 75%,transparent)}
+[data-style="mono"] .kpi[style*="--coral"] .dot{box-shadow:0 0 0 2px var(--on-accent)}
+[data-style="mono"] .fillbar{border-radius:7px}
+[data-style="mono"] .track{background:var(--raised)}
+[data-style="mono"] .chip{border-color:var(--text);color:var(--text);background:transparent}
+[data-style="mono"] .chip.on{background:var(--text);color:var(--bg)}
+[data-style="mono"] .seg{background:transparent;border:1.5px solid var(--text);border-radius:999px}
+[data-style="mono"] .seg button{border-radius:999px}
+[data-style="mono"] .seg button.on{background:var(--text);color:var(--bg);box-shadow:none}
+[data-style="mono"] .seg button.on.inc{background:var(--text);color:var(--bg)}
+[data-style="mono"] .seg button.on.exp{background:var(--gold);color:var(--on-accent)}
+[data-style="mono"] .btn{border-radius:16px;font-weight:700;letter-spacing:.02em}
+[data-style="mono"] .btn.ghost{background:var(--raised)}
+[data-style="mono"] .cat{background:transparent;border:1.5px solid var(--line)}
+[data-style="mono"] .cat.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+[data-style="mono"] .tx .av{border-radius:50%;background:var(--c)!important;color:var(--bg)!important;font-weight:700}
+[data-style="mono"] .tint-gold{background:color-mix(in srgb,var(--gold) 10%,var(--card))}
+[data-style="mono"] .tint-mint{background:var(--raised)}
+[data-style="mono"] .tint-coral{background:color-mix(in srgb,var(--coral) 12%,var(--card))}
+[data-style="mono"] .tile.plain{background:var(--raised)}
+[data-style="mono"] .cta .ic{border-radius:50%;background:var(--text)!important;color:var(--bg)!important}
+[data-style="mono"] .obs .o .ic{border-radius:50%;background:var(--text);color:var(--bg)}
+[data-style="mono"] .pill{border:1.5px solid currentColor;background:transparent}
+[data-style="mono"] .label{letter-spacing:.06em}
+[data-style="mono"] .tag{border:1.5px solid var(--gold);background:transparent;color:var(--gold)}
+[data-style="mono"] .review-head{background:var(--text);color:var(--bg)}
+[data-style="mono"] .review-head .linkbtn{color:var(--gold)}
+[data-style="mono"] .calc-f.result{background:var(--text);color:var(--bg);border-color:var(--text)}
+[data-style="mono"] .calc-f.result label,[data-style="mono"] .calc-f.result .unit,[data-style="mono"] .calc-f.result .hint{color:color-mix(in srgb,var(--bg) 70%,transparent)}
+[data-style="mono"] .toast{background:var(--text);color:var(--bg)}
+[data-style="mono"] .theme-seg button.on{box-shadow:inset 0 0 0 2px var(--text)}
+[data-style="mono"] .switch.on{background:var(--gold)}
+[data-style="mono"] .monthbar{border-radius:999px;background:var(--card)}
+[data-style="mono"] .monthbar button.arrow{border-radius:50%;background:var(--raised)}
+[data-style="mono"] .monthbar .mlabel{border-radius:999px}
+[data-style="mono"] [style*="color:var(--gold)"]{color:var(--gold-text)!important}
+[data-style="mono"] .kp button{border-radius:50%;aspect-ratio:1/1;height:auto;max-height:64px;justify-self:center;width:100%;max-width:64px}
+[data-style="mono"] .kp button.op{border:1.5px solid var(--text);color:var(--text)}
+[data-style="mono"] .kp button.op.on{background:var(--gold);border-color:var(--gold);color:var(--on-accent)}
+[data-style="mono"] .swipe{border:0;background:var(--raised)}
+/* floating pill tab bar */
+[data-style="mono"] nav.tabs{left:16px;right:16px;bottom:calc(var(--safe-b) + 12px);height:64px;padding:6px;border-radius:999px;border:0;
+  background:var(--pill);backdrop-filter:none;box-shadow:0 10px 30px rgba(0,0,0,.18);gap:2px}
+[data-style="mono"] nav.tabs button{color:var(--pill-icon);border-radius:999px;font-size:10px}
+[data-style="mono"] nav.tabs button.on{background:var(--pill-on);color:var(--pill-on-icon)}
+[data-style="mono"] nav.tabs button.on svg{stroke:var(--pill-on-icon)}
+[data-style="mono"] nav.tabs button svg{transform:none!important}
+[data-style="mono"] nav.tabs #fab{background:transparent}
+[data-style="mono"] nav.tabs .fab{width:52px;height:52px;border-radius:50%;transform:none;box-shadow:none;background:var(--gold)}
+[data-style="mono"] #fab:active .fab{transform:scale(.9)}
+[data-style="mono"] nav.tabs .fab svg{stroke:var(--on-accent)}
+[data-style="mono"] main{padding-bottom:calc(var(--safe-b) + 110px)}
+[data-style="mono"] .toast{bottom:calc(var(--safe-b) + 90px)}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;
   -webkit-font-smoothing:antialiased;overscroll-behavior:none;transition:background-color .25s}
@@ -379,7 +465,7 @@ main{padding:4px var(--pad) calc(var(--nav) + var(--safe-b) + 28px)}
 .theme-seg button.on{background:var(--raised);color:var(--text);box-shadow:inset 0 0 0 1.5px var(--gold)}
 .theme-seg .sw3{width:34px;height:22px;border-radius:7px;border:1px solid var(--line);overflow:hidden;display:flex}
 .theme-seg .sw3 i{flex:1}
-.theme-seg.two{grid-template-columns:1fr 1fr 1fr}
+.theme-seg.two{grid-template-columns:1fr 1fr}
 .stylecard{width:100%;height:46px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px}
 .stylecard i{width:16px;height:16px;border-radius:4px;display:block}
 
@@ -639,11 +725,14 @@ const EXP_COLORS = ["#FF7A6B","#F0A35E","#E8C468","#B392F0","#6CB6FF","#F78FB3",
 const OTHER = "#5A6372";
 const DUNE_LIGHT = ["#9C483C","#7FA3A7","#6D332C","#A7AF9F","#C0AE98","#C7826A","#5E7A7D","#8C6A5A","#C2A66B","#7D8B72","#B98B82","#4A3A36"];
 const DUNE_DARK  = ["#C8705F","#ADC6C9","#B3786B","#A7AF9F","#C0AE98","#E0A285","#8FB0B3","#B08D7C","#D9C48E","#9DAA90","#D4A9A0","#8E7A74"];
+const MONO_LIGHT = ["#111111","#D9502F","#8A8A84","#C4C4BE","#3D3D3B","#EE9A85","#5E5E5A","#A6A6A0","#262626","#D3D3CD","#6E6E69","#B4B4AE"];
+const MONO_DARK  = ["#F2F2EE","#F06A4C","#8A8A84","#76766F","#C4C4BE","#F5A58F","#A6A6A0","#9A9A94","#DCDCD6","#6E6E6A","#B4B4AE","#82827C"];
 function cc(hex){
-  if (document.documentElement.dataset.style !== "dune") return hex;
+  const st = document.documentElement.dataset.style;
+  if (st !== "dune" && st !== "mono") return hex;
   const dark = document.documentElement.dataset.theme === "dark";
-  const pal = dark ? DUNE_DARK : DUNE_LIGHT;
-  if (hex === OTHER) return dark ? "#7C6D65" : "#A99D93";
+  const pal = st === "mono" ? (dark ? MONO_DARK : MONO_LIGHT) : (dark ? DUNE_DARK : DUNE_LIGHT);
+  if (hex === OTHER) return st === "mono" ? (dark ? "#5E5E5A" : "#B3B3AD") : (dark ? "#7C6D65" : "#A99D93");
   let i = EXP_COLORS.indexOf(hex); if (i < 0) i = INC_COLORS.indexOf(hex);
   return i < 0 ? hex : pal[i % pal.length];
 }
@@ -710,11 +799,12 @@ function readSystemTheme(){
 function applyTheme(){
   const pref = S.settings.theme || "system";
   const dark = pref === "dark" || (pref === "system" && systemDark);
-  const style = ["pop", "dune"].includes(S.settings.style) ? S.settings.style : "classic";
+  const style = ["pop", "dune", "mono"].includes(S.settings.style) ? S.settings.style : "classic";
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.style = style;
   const bars = style === "pop" ? (dark ? ["#131313", "#1E1E1E"] : ["#FBF7EF", "#FFFFFF"])
     : style === "dune" ? (dark ? ["#1A1312", "#241A18"] : ["#EEECE1", "#F7F7F0"])
+    : style === "mono" ? (dark ? ["#0D0D0D", "#0D0D0D"] : ["#F1F1ED", "#F1F1ED"])
     : (dark ? ["#0D1117", "#161B22"] : ["#F4F2ED", "#FFFFFF"]);
   document.getElementById("metaTheme").setAttribute("content", bars[0]);
   if (window.Android) {
@@ -1428,9 +1518,10 @@ function renderSettings(){
   $("#v-settings").innerHTML = `
     <div class="label section-label" style="margin-top:4px">Appearance</div>
     <div class="theme-seg two">
-      <button data-style-set="classic" class="${!["pop","dune"].includes(S.settings.style) ? "on" : ""}"><span class="stylecard" style="background:#0D1117;border:1px solid #2A3140"><i style="background:#E8C468;border-radius:50%"></i><i style="background:#3DDC97;border-radius:50%"></i><i style="background:#FF7A6B;border-radius:50%"></i></span>Classic</button>
+      <button data-style-set="classic" class="${!["pop","dune","mono"].includes(S.settings.style) ? "on" : ""}"><span class="stylecard" style="background:#0D1117;border:1px solid #2A3140"><i style="background:#E8C468;border-radius:50%"></i><i style="background:#3DDC97;border-radius:50%"></i><i style="background:#FF7A6B;border-radius:50%"></i></span>Classic</button>
       <button data-style-set="pop" class="${S.settings.style === "pop" ? "on" : ""}"><span class="stylecard" style="background:#FBF7EF;border:2px solid #111;box-shadow:2px 2px 0 #111"><i style="background:#FFC83D;border:2px solid #111"></i><i style="background:#22B455;border:2px solid #111"></i><i style="background:#FF4D6A;border:2px solid #111"></i></span>Pop</button>
       <button data-style-set="dune" class="${S.settings.style === "dune" ? "on" : ""}"><span class="stylecard" style="background:linear-gradient(165deg,#9C483C,#B9776A 55%,#ADC6C9)"><i style="background:#F7F7F0;border-radius:50%"></i><i style="background:#6D332C;border-radius:50%"></i><i style="background:#C0AE98;border-radius:50%"></i></span>Dune</button>
+      <button data-style-set="mono" class="${S.settings.style === "mono" ? "on" : ""}"><span class="stylecard" style="background:#F1F1ED;border:1px solid #E2E2DC"><i style="background:#111;border-radius:50%;width:18px;height:18px"></i><i style="background:#111;border-radius:50%;width:18px;height:18px"></i><i style="background:#D9502F;border-radius:50%;width:18px;height:18px"></i></span>Mono</button>
     </div>
     <div class="theme-seg">${tbtn("system","System","#F4F2ED","#0D1117")}${tbtn("dark","Dark","#0D1117","#161B22")}${tbtn("light","Light","#F4F2ED","#FFFFFF")}</div>
     ${HAS_SMS ? `<div class="label section-label">Auto-logging</div>
