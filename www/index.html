@@ -791,21 +791,21 @@ function parseTextsFile(text){
   return out;
 }
 const IOS_SHORTCUT_URL = "https://www.icloud.com/shortcuts/62ee3adc962247ef9b8f978f7ff9079c";
+const SHORTCUT_URL = "https://www.icloud.com/shortcuts/62ee3adc962247ef9b8f978f7ff9079c";
 function iosSetupSheet(){
   const step = (n, html) => `<div class="o"><div class="ic tint-gold">${n}</div><div>${html}</div></div>`;
   openSheet(`<h2>Bank texts on iPhone</h2>
-    <p class="calc-note" style="margin:-8px 0 16px">One-time setup, about a minute. After that every bank text is saved for you, and you just tap <b>Import bank texts</b> in Meridian.</p>
-    <a class="btn" href="${IOS_SHORTCUT_URL}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;margin-bottom:6px">Add shortcut</a>
-    <p class="calc-note" style="margin:0 0 16px;text-align:center">Opens Shortcuts — tap <b>Add Shortcut</b> there.</p>
-    <div class="label" style="margin:0 0 10px">Then turn it on (30 seconds)</div>
+    <p class="calc-note" style="margin:-8px 0 16px">One-time setup, about a minute. After that, every bank text is saved automatically and you just tap <b>Import bank texts</b> in Meridian.</p>
     <div class="obs">
-      ${step(1, `In <b>Shortcuts</b> open the <b>Automation</b> tab and tap <b>+</b>.`)}
-      ${step(2, `Choose <b>Message</b>. Tap <b>Message Contains</b> and type <b>جم</b>. Leave Sender empty.`)}
-      ${step(3, `Select <b>Run Immediately</b>, tap <b>Next</b>, and pick <b>Meridian Bank Text</b>.`)}
-      ${step(4, `Repeat once with <b>جنيه</b> and once with <b>EGP</b>, so every bank and wallet format is caught.`)}
+      ${step(1, `Tap <b>Add shortcut</b> below, then <b>Add Shortcut</b> in the Shortcuts app.`)}
+      ${step(2, `In Shortcuts open the <b>Automation</b> tab › <b>+</b> › <b>Message</b>.`)}
+      ${step(3, `Set <b>Message Contains</b> to <b>جم</b>, leave Sender empty, choose <b>Run Immediately</b>, tap <b>Next</b> and pick <b>Meridian Bank Text</b>.`)}
+      ${step(4, `Repeat steps 2–3 with <b>جنيه</b> and with <b>EGP</b>, so every bank and wallet format is caught.`)}
+      ${step(5, `Later, in Meridian tap <b>Import bank texts</b> › <b>Browse</b> › <b>iCloud Drive</b> › <b>Shortcuts</b> › <b>meridian-bank-texts.txt</b>.`)}
     </div>
-    <p class="calc-note">To import: <b>Import bank texts</b> › <b>Browse</b> › <b>iCloud Drive</b> › <b>Shortcuts</b> › <b>meridian-bank-texts.txt</b>. Importing the same file again is safe — texts already read are skipped.</p>
-    <div class="btnrow"><button class="btn ghost" id="iosImportNow">Import bank texts now</button></div>`);
+    <a class="btn" href="${SHORTCUT_URL}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;margin-top:18px">＋ Add shortcut</a>
+    <div class="btnrow"><button class="btn ghost" id="iosImportNow">Import bank texts now</button></div>
+    <p class="calc-note">Importing the same file again is safe — texts already read are skipped. Only texts that arrive after the setup are saved.</p>`);
 }
 $("#importTexts").onchange = e => {
   const f = e.target.files[0]; if (!f) return;
