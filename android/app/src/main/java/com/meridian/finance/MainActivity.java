@@ -183,9 +183,11 @@ public class MainActivity extends Activity {
     /** Colours the strips behind the system bars and switches the bar icons dark or light. */
     @SuppressWarnings("deprecation")
     private void applyBarColors(boolean light) {
+        applyBarColors(light ? LIGHT_BG : DARK_BG, light ? LIGHT_NAV : DARK_NAV, light);
+    }
+
+    private void applyBarColors(int bg, int nav, boolean light) {
         lightTheme = light;
-        int bg = light ? LIGHT_BG : DARK_BG;
-        int nav = light ? LIGHT_NAV : DARK_NAV;
         root.setBackgroundColor(bg);
         topStrip.setBackgroundColor(bg);
         bottomStrip.setBackgroundColor(nav);
@@ -318,6 +320,18 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public boolean isSystemDark() {
             return isSystemDarkNow();
+        }
+
+        /** Colours for the app's current style (Classic or Pop) and mode. */
+        @JavascriptInterface
+        public void setBars(final String bg, final String nav, final boolean light) {
+            runOnUiThread(() -> {
+                try {
+                    applyBarColors(Color.parseColor(bg), Color.parseColor(nav), light);
+                } catch (Exception e) {
+                    applyBarColors(light);
+                }
+            });
         }
 
         @JavascriptInterface
