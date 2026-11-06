@@ -1,5 +1,5 @@
 /* Meridian offline support for the iPhone / web version. */
-const CACHE = "meridian-v8";
+const CACHE = "meridian-v9";
 const FILES = [
   "./", "index.html", "manifest.webmanifest",
   "fonts/inter-latin-400-normal.woff2", "fonts/inter-latin-500-normal.woff2",
