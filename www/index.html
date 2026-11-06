@@ -185,6 +185,23 @@
 [data-style="dune"] .theme-seg button.on{box-shadow:inset 0 0 0 1.5px var(--gold)}
 [data-style="dune"] [style*="color:var(--gold)"]{color:var(--gold-text)!important}
 [data-style="dune"] .grab{background:var(--zero)}
+/* Dune light: soft sunset wash behind everything */
+:root[data-style="dune"][data-theme="light"]{background:#F2EEE6}
+[data-style="dune"][data-theme="light"] body{background:transparent}
+[data-style="dune"][data-theme="light"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(120% 60% at -15% -10%, rgba(156,72,60,.42), rgba(181,103,90,.18) 40%, transparent 72%),
+  radial-gradient(95% 55% at 115% 25%, rgba(173,198,201,.85), rgba(173,198,201,.25) 50%, transparent 75%),
+  radial-gradient(110% 55% at 50% 115%, rgba(173,198,201,.75), transparent 70%),
+  radial-gradient(90% 50% at -15% 75%, rgba(192,174,152,.55), transparent 70%),
+  radial-gradient(70% 40% at 85% 70%, rgba(214,170,158,.35), transparent 70%),
+  linear-gradient(170deg,#F1E1D9 0%,#F2ECE5 35%,#E9EEEB 70%,#DFEBEC 100%)}
+[data-style="dune"][data-theme="light"] .top{background:linear-gradient(180deg,rgba(241,225,217,.55),rgba(241,225,217,0));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+[data-style="dune"][data-theme="light"] .card:not(.hero),[data-style="dune"][data-theme="light"] .kpi,[data-style="dune"][data-theme="light"] .txlist,
+[data-style="dune"][data-theme="light"] .set-list,[data-style="dune"][data-theme="light"] .sumrow>div,[data-style="dune"][data-theme="light"] .theme-seg,
+[data-style="dune"][data-theme="light"] .review,[data-style="dune"][data-theme="light"] .monthbar{background:rgba(251,250,246,.74);border:1px solid rgba(255,255,255,.75);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+[data-style="dune"][data-theme="light"] .banner{background:rgba(250,246,240,.7);border:1px solid rgba(156,72,60,.18)}
+[data-style="dune"][data-theme="light"] .tile.plain{background:rgba(234,234,220,.6)}
+[data-style="dune"][data-theme="light"] nav.tabs{background:rgba(250,249,244,.82);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top-color:rgba(156,72,60,.12)}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;
